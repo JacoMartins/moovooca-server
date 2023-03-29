@@ -8,7 +8,7 @@ let isRefreshing = false;
 let failedRequestQueue = [];
 
 export const api = axios.create({
-  baseURL: process.env.API_URL || 'http://192.168.1.2:5000',
+  baseURL: process.env.API_URL || 'http://localhost:5000',
   headers: {
     Authorization: `Bearer ${cookies['moovooca.token']}`
   }
