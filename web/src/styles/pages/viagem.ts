@@ -115,7 +115,7 @@ export const BodyContainer = styled('div', {
         flexDirection: 'column',
         gap: '0.125rem',
 
-        'span.bold': {
+        'span:first-child': {
           fontWeight: 500,
           lineHeight: '1rem',
         }
@@ -141,8 +141,8 @@ export const BodyContainer = styled('div', {
     
     '.lineContainer': {
       display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'top',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       gap: '3rem',
 
       '@media screen and (max-width: 768px)': {
@@ -171,15 +171,6 @@ export const BodyContainer = styled('div', {
         justifyContent: 'left',
         alignItems: 'left',
         gap: '0.5rem',
-
-        '.tripContainer': {
-          display: 'flex',
-          minWidth: '100%',
-
-          table: {
-            minWidth: '100%'
-          }
-        },
       },
 
       '.mapsContainer': {

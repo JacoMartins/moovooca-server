@@ -7,6 +7,7 @@ export interface viagem {
   destino: string;
   horario_partida: string;
   horario_chegada?: string;
+  duracao_media: number;
   pago_inteira: number;
   pago_meia: number;
   gratuidade: number;

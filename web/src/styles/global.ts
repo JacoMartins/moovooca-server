@@ -10,6 +10,24 @@ const spin = keyframes({
   }
 })
 
+export const openMobile = keyframes({
+  '0%': {
+    transform: 'translate(0, 6rem)'
+  },
+  '100%': {
+    transform: 'translate(0, 0)'
+  }
+})
+
+export const open = keyframes({
+  '0%': {
+    transform: 'scale(90%)'
+  },
+  '100%': {
+    transform: 'scale(100%)'
+  }
+})
+
 export const slideUpAndFade = keyframes({
   from: {
     opacity: 0,
@@ -295,7 +313,77 @@ export const globalStyles = globalCss({
   'svg.load': {
     animation: `${spin} 1s infinite linear`,
     opacity: 0.6
-  }
+  },
+
+  '.react-modal-overlay': {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'fixed',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 999
+  },
+
+  '.react-modal-content': {
+    width: 'auto',
+    background: '$white_800',
+    backdropFilter: 'blur(20px)',
+    padding: '1rem',
+    borderRadius: '0.25rem',
+    zIndex: 999,
+    animation: `${open} 0.15s ease-out`,
+    
+    '@media screen and (max-width: 720px)': {
+      position: 'absolute',
+      bottom: 0,
+      borderTop: 'solid 2px rgba(255, 255, 255, 0.1)',
+      minWidth: 'calc(100% - 2rem)',
+      animation: `${openMobile} 0.15s ease-out`,
+    },
+
+    button: {
+      '@media screen and (max-width: 480px)': {
+        padding: '0.75rem 0.5rem',
+      }
+    }
+  },
+
+  '.react-modal-content-header': {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '1rem',
+    height: 'auto',
+    width: '100%',
+    padding: '0 0 1rem 0',
+    margin: 0,
+    
+    '.react-modal-close': {
+      position: 'relative',
+      border: 0,
+      background: 'transparent',
+      transition: 'filter 0.2s',
+      cursor: 'pointer',
+  
+      '&:hover': {
+        filter: 'brightness(0.8)',
+      },
+  
+      zIndex: 999,
+    },
+
+    h2: {
+      margin: 0
+    }
+  },
 });
 
 export const Footer = styled('footer', {

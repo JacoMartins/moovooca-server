@@ -3,7 +3,6 @@ import Header from "../../components/Header";
 import { api } from "../../services/api";
 import { BodyContainer, Main, StopContainer } from "../../styles/pages/horarios";
 import { ArrowUpRight, Bus, CaretDown, MapPin } from "phosphor-react";
-import GoogleMapReact from 'google-map-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { sentido } from "../../types/api/sentido";
 import { GetServerSidePropsContext } from "next";
@@ -12,6 +11,7 @@ import Head from "next/head";
 import Table from "../../components/Table";
 import { viagem } from "../../types/api/viagem";
 import TableRow from "../../components/TableRow";
+import { format_datetime } from "../../utils/format_datetime";
 
 export default function Horario({ linha, sentido, sentidos, viagens }: HorarioProps) {
   const router = useRouter()
@@ -84,8 +84,18 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                   </div>
 
                   <div className="stopsNearText">
-                    <span>Para próximo de: </span>
-                    <span>{linha.campus}</span>
+                    <span>
+                      <span className="bold">Parte de: </span>
+                      {viagens[0].origem};
+                      <br/>
+                      <span className="bold">Termina em: </span> 
+                      {viagens[0].destino};
+                      <br /> 
+                      <span className="bold">Passa próximo de: </span> 
+                      {linha.campus}.
+                      <br />
+                      <span className="bold">Duração média da viagem: </span>{(viagens[0].duracao_media / 60) > 60 ? (viagens[0].duracao_media / 60 / 60).toFixed(0) + " horas e " + ((viagens[0].duracao_media / 60) % 60).toFixed(0) + " minutos" : (viagens[0].duracao_media / 60).toFixed(0) + " minutos"}.
+                    </span>
                   </div>
                 </div>
 
@@ -94,13 +104,16 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                     {viagens.map((viagem: viagem) => {
                       return (
                         <TableRow key={viagem.id} data={{
-                          linha:
-                            <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                          viagem:
+                            <button onClick={() => goTo(`/viagem?id=${viagem.id}&lid=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                               <div className='firstContainer'>
                                 <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                                {viagem.origem}
+                                {`Das ${format_datetime(viagem.horario_partida)} até às ${format_datetime(viagem.horario_chegada)}`}
                               </div>
-                            </button>,
+                              <div className="lastContainer">
+                                <p>{viagem.assentos_disponiveis} assentos disponíveis.</p>
+                              </div>
+                            </button>
                         }} />
                       )
                     })}
@@ -122,7 +135,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { data: linha } = await api.get(`/linha?id=${lid}`);
   const { data: sentido } = await api.get(`/sentido?id=${sid}`);
   const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}`);
-  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}`)
+  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}&data=hoje`)
 
   return {
     props: {

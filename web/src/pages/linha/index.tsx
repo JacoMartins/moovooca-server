@@ -93,7 +93,6 @@ export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps)
 
                 <div className="buttonContainer">
                   <button onClick={() => goTo(`/horarios?lid=${linha.id}&sid=${sentido.id}`)}>Ver grade horária da linha</button>
-                  <button>Reservar assento</button>
                 </div>
 
                 <StopContainer>
