@@ -8,6 +8,8 @@ class PlainUsuarioSchema(Schema):
   sobrenome = fields.Str(required=True)
   senha = fields.Str(load_only=True)
   email = fields.Str(required=True)
+  motorista= fields.Int()
+  admin= fields.Int()
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
@@ -19,6 +21,7 @@ class PlainViagemSchema(Schema):
   data = fields.DateTime(required=True)
   origem = fields.Str(required=True)
   destino = fields.Str(required=True)
+  duracao_media = fields.Int(required=True)
   horario_partida = fields.Str(required=True)
   horario_chegada = fields.Str(required=True)
   pago_inteira = fields.Int(required=True)
@@ -32,7 +35,7 @@ class PlainViagemSchema(Schema):
 class ReservaSchema(Schema):
   id_viagem = fields.Int(required=True)
   id_usuario = fields.Int()
-  assento = fields.Int(required=True)
+  assento = fields.Int()
   forma_pagamento = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
@@ -56,17 +59,21 @@ class AuthSchema(Schema):
 
 
 class ClienteSchema(Schema):
+  id = fields.Int(dump_only=True)
   nome_usuario = fields.Str(dump_only=True)
   nome = fields.Str(dump_only=True)
   sobrenome = fields.Str(dump_only=True)
   email = fields.Str(dump_only=True)
 
 class UsuarioSchema(Schema):
+  id = fields.Int()
   nome_usuario = fields.Str(required=True)
   nome = fields.Str()
   sobrenome = fields.Str()
   senha = fields.Str(load_only=True)
   email = fields.Str()
+  motorista= fields.Int()
+  admin= fields.Int()
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
@@ -89,7 +96,8 @@ class PlainParadaSchema(Schema):
   id_linha = fields.Int(required=True)
   id_sentido = fields.Int(required=True)
   parada = fields.Str(required=True)
-  minutos = fields.Int(required=True)
+  latitude = fields.Str(required=True)
+  longitude = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
@@ -140,12 +148,14 @@ class ParadaSchema(Schema):
   id_linha = fields.Int(required=True)
   id_sentido = fields.Int(required=True)
   parada = fields.Str(required=True)
-  minutos = fields.Int(required=True)
+  latitude = fields.Str(required=True)
+  longitude = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
 
 class ViagemSchema(Schema):
+  id = fields.Int()
   id_linha = fields.Int(required=True)
   id_sentido = fields.Int(required=True)
   data = fields.DateTime(required=True)
@@ -153,6 +163,7 @@ class ViagemSchema(Schema):
   destino = fields.Str(required=True)
   horario_partida = fields.DateTime(required=True)
   horario_chegada = fields.DateTime(required=True)
+  duracao_media = fields.Int(required=True)
   pago_inteira = fields.Int(required=True)
   pago_meia = fields.Int(required=True)
   gratuidade = fields.Int(required=True)

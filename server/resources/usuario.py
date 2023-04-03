@@ -46,23 +46,69 @@ class Usuario(MethodView):
 
     return usuario
   
+  @jwt_required()
   @blp.arguments(PlainUsuarioSchema)
   @blp.response(200)
   def put(self, usuario_data):
+    admin = get_jwt()["admin"]
+    self_user = get_jwt_identity()
+
     usuario_id = req.args.get('id')
 
     usuario = UsuarioModel.query.get_or_404(usuario_id)
 
-    if usuario:
-      usuario['nome_usuario'] = usuario_data['nome_usuario']
-      usuario['nome'] = usuario_data['nome']
-      usuario['sobrenome'] = usuario_data['sobrenome']
-      usuario['email'] = usuario_data['email']
-      usuario['atualizado_em'] = datetime.utcnow()
-    else:
-      abort(404, "User not found.")
+    if not admin:
+      if usuario.id == self_user:
+        usuario.nome_usuario = usuario_data['nome_usuario']
+        usuario.nome = usuario_data['nome']
+        usuario.sobrenome = usuario_data['sobrenome']
+        usuario.email = usuario_data['email']
+        usuario.atualizado_em = datetime.utcnow()
+      else: abort(403, "Error trying to update: You can't update an user that isn't you.")
+    
+    if admin:
+      usuario.nome_usuario = usuario_data['nome_usuario']
+      usuario.nome = usuario_data['nome']
+      usuario.sobrenome = usuario_data['sobrenome']
+      usuario.email = usuario_data['email']
+      usuario.admin = usuario_data['admin']
+      usuario.motorista = usuario_data['motorista']
+      usuario.atualizado_em = datetime.utcnow()
+
+    try:
+      db.session.add(usuario)
+      db.session.commit()
+    except SQLAlchemyError:
+      abort(500, "An error ocurred while updating item in table 'usuarios'.")
     
     return {"message": "User updated."}
+  
+  @jwt_required()
+  @blp.arguments(PlainUsuarioSchema)
+  @blp.response(200)
+  def delete(self, id):
+    admin = get_jwt()["admin"]
+    self_user = get_jwt_identity()
+
+    usuario_id = req.args.get('id')
+
+    usuario = UsuarioModel.query.get_or_404(usuario_id)
+
+    if not admin:
+      if usuario.id == self_user:
+        try:
+          db.session.delete(usuario)
+          db.session.commit()
+        except SQLAlchemyError: abort(500, "An error ocurred while deleting item in table 'usuarios'.")
+      else: abort(403, "Error trying to delete: You can't delete an user that isn't you.")
+    
+    if admin:
+      try:
+        db.session.delete(usuario)
+        db.session.commit()
+      except SQLAlchemyError: abort(500, "An error ocurred while deleting item in table 'usuarios'.")
+    
+    return {"message": "User delete."}
 
 
 @blp.route('/me')

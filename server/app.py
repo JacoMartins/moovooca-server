@@ -71,12 +71,16 @@ def create_app(db_url=None):
 
   @jwt.additional_claims_loader
   def add_claims_to_jwt(identity):
+    claims = {}
     usuario = UsuarioModel.query.filter(UsuarioModel.id == identity).first()
     
-    if usuario.admin == 0:
-      return {"admin": False}
-    else:
-      return {"admin": True}
+    if usuario.admin == 0: claims["admin"] = False
+    else: claims["admin"] = True
+
+    if usuario.motorista == 0: claims["motorista"] = False
+    else: claims["motorista"] = True
+
+    return claims
 
   @jwt.expired_token_loader
   def expired_token_callback(jwt_header, jwt_payload):

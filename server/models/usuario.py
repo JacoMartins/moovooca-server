@@ -10,8 +10,10 @@ class UsuarioModel(db.Model):
   sobrenome = db.Column(db.String, nullable=False)
   senha = db.Column(db.String, nullable=False)
   email = db.Column(db.String, nullable=False)
+  motorista = db.Column(db.Integer, default=0, nullable=False)
   admin = db.Column(db.Integer, default=0, nullable=False)
   criado_em = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
   atualizado_em = db.Column(db.DateTime, nullable=True)
 
   reservas = db.relationship("ReservaModel", back_populates="usuario", cascade="all, delete")
+  viagens = db.relationship("ViagemModel", back_populates="motorista", cascade="all, delete")

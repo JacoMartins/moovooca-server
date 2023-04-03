@@ -6,9 +6,9 @@ class ReservaModel(db.Model):
 
   id = db.Column(db.Integer, primary_key=True)
   id_viagem = db.Column(db.Integer, db.ForeignKey("viagens.id"), nullable=False)
-  id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-  assento = db.Column(db.Integer, nullable=False)
-  forma_pagamento = db.Column(db.String(20), nullable=False)
+  id_usuario = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=True)
+  assento = db.Column(db.String(2), nullable=False)
+  forma_pagamento = db.Column(db.String(20), nullable=True)
   criado_em = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
   atualizado_em = db.Column(db.DateTime, nullable=True)
 

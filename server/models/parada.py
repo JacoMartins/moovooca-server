@@ -8,7 +8,8 @@ class ParadaModel(db.Model):
     id_linha = db.Column(db.Integer, db.ForeignKey("linhas.id"), nullable=False)
     id_sentido = db.Column(db.Integer, db.ForeignKey("sentidos.id"), nullable=False)
     parada = db.Column(db.String, nullable=False)
-    minutos = db.Column(db.Integer, nullable=False)
+    latitude = db.Column(db.String, nullable=False)
+    longitude = db.Column(db.String, nullable=False)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow())
     atualizado_em = db.Column(db.DateTime, nullable=True)
 

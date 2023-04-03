@@ -7,8 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 
 from db import db
-from models import ReservaModel
-from schemas import ReservaSchema, PlainReservaSchema
+from models import ReservaModel, ViagemModel
+from schemas import ReservaSchema
 
 
 blp = Blueprint("Reservas", __name__, description="Operações com reservas.")
@@ -44,8 +44,16 @@ class Reserva(MethodView):
     reserva_data["id_usuario"] = usuario_id
     reserva = ReservaModel(**reserva_data)
 
+    print(reserva_data['id_viagem'])
+
+    viagem = ViagemModel.query.get_or_404(reserva_data['id_viagem'])
+
+    reserva.assento = viagem.assentos_disponiveis
+    viagem.assentos_disponiveis -= 1
+
     try:
       db.session.add(reserva)
+      db.session.add(viagem)
       db.session.commit()
     except SQLAlchemyError:
       abort(500, "An error ocurred while inserting item to table 'reserva'.")
