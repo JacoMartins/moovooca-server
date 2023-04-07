@@ -48,11 +48,11 @@ class LinhaList(MethodView):
       input_text = 'input: Considere as seguintes informações: '
 
       for linha in linhas:
-        sentidos = SentidoModel.query.filter(SentidoModel.id == linha.id).all()
+        sentidos = SentidoModel.query.filter(SentidoModel.id_linha == linha.id).all()
         input_text += f'Encontrada a linha de ônibus com nome "{linha.cod} {linha.nome}", que contém uma parada próxima ao campus {linha.campus}, contendo {len(sentidos)} sentidos, sendo esses: '
 
         for sentido in sentidos:
-          input_text += f'Sentido {sentido.sentido}, que inicia suas operações as {sentido.horario_inicio} partindo de {sentido.ponto_partida} e chegando ao destino {sentido.ponto_destino} em cada viagem, terminando o dia as {sentido.horario_fim}. '
+          input_text += f'Sentido {sentido.sentido}, que inicia suas operações as {sentido.horario_inicio}, finalizando todas as suas viagens do dia as {sentido.horario_fim}. As viagens do sentido {sentido.sentido} partem de {sentido.ponto_partida} e chegam ao destino {sentido.ponto_destino}.'
       
       input_text += f'Faça um texto resumido gerando apenas as informações pedidas de acordo com as palavras chave "{str(query)}", utilizando como base as linhas de ônibus encontradas, gerando as informações da forma mais simplificada o possível para o entendimento do usuário, leve mais em consideração a localização de origem e o campus onde o ônibus para.'
 
