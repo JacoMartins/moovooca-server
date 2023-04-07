@@ -57,6 +57,20 @@ export const BodyContainer = styled('div', {
     gap: '0.5rem',
     borderBottom: 'solid 1px $black_150',
     paddingBottom: '0.5rem',
+
+    '.gptText': {
+      background: '$black_50',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '0.25rem',
+      
+      '.bold': {
+        fontWeight: 500
+      },
+
+      'span:first-child': {
+        color: '$green_600'
+      }
+    },
     
     '@media screen and (min-width: 720px)': {
       alignItems: 'left',

@@ -28,8 +28,8 @@ export function reload() {
 }
 
 export function logout() {
-  destroyCookie(undefined, 'moovooca.token');
-  destroyCookie(undefined, 'moovooca.refresh_token');
+  destroyCookie(undefined, '__session');
+  destroyCookie(undefined, '__session_refresh');
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [autenticado, setAutenticado] = useState(false);
 
   useEffect(() => {
-    const {'moovooca.token': token} = parseCookies();
+    const {'__session': token} = parseCookies();
 
     if (token) {
       api.get('/me')
@@ -58,12 +58,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         senha
       }).then(res => res.data);
 
-      setCookie(undefined, 'moovooca.token', token, {
+      setCookie(undefined, '__session', token, {
         maxAge: 60 * 60 * 24 * 30,
         path: '/'
       });
 
-      setCookie(undefined, 'moovooca.refresh_token', refresh_token, {
+      setCookie(undefined, '__session_refresh', refresh_token, {
         maxAge: 60 * 60 * 24 * 30,
         path: '/'
       });

@@ -10,7 +10,7 @@ let failedRequestQueue = [];
 export const api = axios.create({
   baseURL: process.env.API_URL || 'http://192.168.1.2:5000',
   headers: {
-    Authorization: `Bearer ${cookies['moovooca.token']}`
+    Authorization: `Bearer ${cookies['__session']}`
   }
 });
 
@@ -21,7 +21,7 @@ api.interceptors.response.use(res => res, (error:AxiosError) => {
     if (error_response.error === 'token_expired') {
       cookies = parseCookies();
       
-      const {'moovooca.refresh_token': refresh_token} = cookies;
+      const {'__session_refresh': refresh_token} = cookies;
       const originalConfig = error.config;
 
       if(!isRefreshing){
@@ -34,12 +34,12 @@ api.interceptors.response.use(res => res, (error:AxiosError) => {
         }).then(res => {
           const { token } = res.data;
   
-          setCookie(undefined, 'moovooca.token', token, {
+          setCookie(undefined, '__session', token, {
             maxAge: 60 * 60 * 24 * 30,
             path: '/'
           });
     
-          setCookie(undefined, 'moovooca.refresh_token', refresh_token, {
+          setCookie(undefined, '__session_refresh', refresh_token, {
             maxAge: 60 * 60 * 24 * 30,
             path: '/'
           });

@@ -12,8 +12,10 @@ import Table from "../../components/Table";
 import { viagem } from "../../types/api/viagem";
 import TableRow from "../../components/TableRow";
 import { format_datetime } from "../../utils/format_datetime";
+import { format_seconds } from "../../utils/format_seconds";
 
 export default function Horario({ linha, sentido, sentidos, viagens }: HorarioProps) {
+  const formatted_duracao = format_seconds(viagens[0].duracao_media)
   const router = useRouter()
 
   function goTo(path: string) {
@@ -94,7 +96,7 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                       <span className="bold">Passa próximo de: </span> 
                       {linha.campus}.
                       <br />
-                      <span className="bold">Duração média da viagem: </span>{(viagens[0].duracao_media / 60) > 60 ? (viagens[0].duracao_media / 60 / 60).toFixed(0) + " horas e " + ((viagens[0].duracao_media / 60) % 60).toFixed(0) + " minutos" : (viagens[0].duracao_media / 60).toFixed(0) + " minutos"}.
+                      <span className="bold">Duração média da viagem: </span>{formatted_duracao}.
                     </span>
                   </div>
                 </div>

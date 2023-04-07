@@ -354,6 +354,10 @@ export const globalStyles = globalCss({
     }
   },
 
+  '.react-modal-container': {
+    display: 'flex',
+  },
+
   '.react-modal-content-header': {
     position: 'relative',
     display: 'flex',

@@ -2,14 +2,8 @@ import Header from '../components/Header'
 import { BodyContainer, ImgContainer, Main } from '../styles/pages/home'
 
 import { api } from '../services/api'
-import onibus from '../assets/img/onibus.webp'
-import reitoria from '../assets/img/reitoria.png'
-import { useEffect, useState } from 'react'
-import { linha, response_linha } from '../types/api/linha'
-import Table from '../components/Table'
-import TableRow from '../components/TableRow'
-import { Bus, CaretRight, Info, MagnifyingGlass } from 'phosphor-react'
-import { Footer } from '../styles/global'
+import {  useState } from 'react'
+import { MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
@@ -20,7 +14,7 @@ export default function Home({ linhas }) {
 
   function goTo(path: string) {
     event.preventDefault()
-    
+
     router.push(path)
   }
 
@@ -35,8 +29,8 @@ export default function Home({ linhas }) {
         <BodyContainer>
           <section className="welcomeSection">
             <div className="textContainer">
-              <h1>Bem-vindo ao Moovooca</h1>
-              <h3 className='lead'>Linhas de Ônibus dos Campus UFC</h3>
+              <h1>Seja bem-vindo ao Moovooca!</h1>
+              <h3 className='lead'>Utilize nosso inteligente sistema de pesquisa para encontrar a rota ideal para você chegar até a UFC.</h3>
             </div>
 
             <form onSubmit={() => goTo(`/search?query=${searchInput}`)} className='searchContainer'>

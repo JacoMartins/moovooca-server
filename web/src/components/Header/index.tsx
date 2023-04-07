@@ -1,12 +1,9 @@
-import { Bus, Gear, List, SignOut, User } from "phosphor-react";
+import { Bus, List } from "phosphor-react";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { HandleNav, HeaderContainer, LabelText, Logo } from "./styles";
+import { HandleNav, HeaderContainer, Logo } from "./styles";
 
 import Nav from "../Nav";
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import ProfileButton from "../ProfileButton";
-import { NavButton } from "../Nav/styles";
 import { HeaderProps } from "../../types/components/header";
 import { useRouter } from "next/router";
 

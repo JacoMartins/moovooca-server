@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import Header from "../../components/Header";
 import Modal from 'react-modal'
 import { api } from "../../services/api";
-import { BodyContainer, Main, StopContainer } from "../../styles/pages/viagem";
-import { ArrowUpRight, Bus, CaretDown, MapPin, X } from "phosphor-react";
+import { BodyContainer, Main, ModalContainer, StopContainer } from "../../styles/pages/viagem";
+import { ArrowUpRight, Bus, CaretDown, CheckCircle, CircleNotch, MapPin, X } from "phosphor-react";
 import GoogleMapReact from 'google-map-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { sentido } from "../../types/api/sentido";
@@ -12,13 +12,16 @@ import { ViagemProps } from "../../types/pages/Viagem";
 import Head from "next/head";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { BusLayout } from "../../components/BusLayout";
+import { reserva } from "../../types/api/reserva";
+import { HttpStatusCode } from "axios";
 
-Modal.setAppElement('.react-modal')
-
-export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps) {
+export default function Viagem({ paradas, viagem }: ViagemProps) {
   const router = useRouter()
   const [modal, setModal] = useState(false)
+  const [reserva, setReserva] = useState<reserva>()
+  const [reservaLoading, setReservaLoading] = useState(false)
+  const [error, setError] = useState(false)
+  const [status, setStatus] = useState<HttpStatusCode>()
 
   const data_viagem = new Date(viagem.data)
   const dia_viagem = data_viagem.getDate() < 10 ? '0' + data_viagem.getDate() : data_viagem.getDate()
@@ -51,41 +54,80 @@ export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps)
 
   function closeModal() {
     setModal(false)
+    setStatus(null)
+    setReserva(null)
+    setReservaLoading(false)
   }
 
 
   async function handleReserva() {
-    const fetch = await api.post('/reserva', {
+    setModal(true)
+
+    setReservaLoading(true)
+
+    await api.post('/reserva', {
       id_viagem: viagem.id,
       id_usuario: usuario.id,
       forma_pagamento: 'inteira'
+    }).then(
+      res => setReserva(res.data)
+    ).catch(error => {
+      if (error.response) {
+        setStatus(error.response.status)
+      }
     })
+
+    setReservaLoading(false)
   }
+
+  Modal.setAppElement('.react-modal')
 
   return (
     <>
       <Head>
-        <title>Viagem {viagem.id} - {linha.cod} {linha.nome} - Moovooca</title>
+        <title>Viagem {viagem.id} - {viagem.linha.cod} {viagem.linha.nome} - Moovooca</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
       <Main>
-        <div className="react-modal">
-          <Modal
-            isOpen={modal}
-            onRequestClose={closeModal}
-            overlayClassName="react-modal-overlay"
-            className="react-modal-content"
-          >
-            <div className="react-modal-content-header">
-              <h2>Realizar uma reserva</h2>
-              <X className="react-modal-close" size={24} onClick={closeModal} />
-            </div>
+        <Modal
+          isOpen={modal}
+          onRequestClose={closeModal}
+          overlayClassName="react-modal-overlay"
+          className="react-modal-content"
+        >
+          <div className="react-modal-content-header">
+            <h2>Reserva</h2>
+            <X className="react-modal-close" size={24} onClick={closeModal} />
+          </div>
 
-            <div className="react-modal-container">
-              <BusLayout></BusLayout>
-            </div>
-          </Modal>
-        </div>
+          <div className="react-modal-container">
+            <ModalContainer>
+              {
+                reservaLoading &&
+                <div className="row">
+                  <CircleNotch className="load" size={24} weight="regular" />
+                  Realizando reserva...
+                </div>
+              }
+
+              {
+                reserva &&
+                <>
+                  <div className="row">
+                    <CheckCircle size={24} weight="regular" />Código da reserva:
+                    <b>{reserva.cod}</b>
+                  </div>
+                  <button onClick={() => goTo('/reservas')}>Ver minhas reservas</button>
+                </>
+              }
+
+              {
+                status && <div className="row"><X size={24} weight="regular" />Ocorreu um erro ao realizar a reserva.</div>
+              }
+            </ModalContainer>
+          </div>
+        </Modal>
+
         <Header />
         <BodyContainer>
           <div className="lineHeader">
@@ -94,11 +136,11 @@ export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps)
               <h1>
                 <span>
                   <Bus weight='regular' color="#276749" />
-                  {linha.cod}
+                  {viagem.linha.cod}
                 </span>
-                {linha?.nome}
+                {viagem.linha?.nome}
               </h1>
-              <button>Sentido {sentido.sentido}</button>
+              <button>Sentido {viagem.sentido.sentido}</button>
             </div>
             <hr />
           </div>
@@ -115,28 +157,31 @@ export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps)
 
                   <div className="stopsNearText">
                     <span>Para próximo de: </span>
-                    <span>{linha.campus}</span>
+                    <span>{viagem.linha.campus}</span>
                   </div>
                 </div>
 
                 <div>
-                  <span><span className="bold">Linha: </span>{linha.cod} {linha.nome}</span>
+                  <span><span className="bold">Linha: </span>{viagem.linha.cod} {viagem.linha.nome}</span>
                   <br />
-                  <span><span className="bold">Sentido: </span>{sentido.sentido}</span>
+                  <span><span className="bold">Sentido: </span>{viagem.sentido.sentido}</span>
                   <br />
                   <span><span className="bold">Data da viagem: </span>{dia_viagem}/{mes_viagem}/{data_viagem.getFullYear()}</span>
                   <br />
-                  <span><span className="bold">Capacidade de assentos: </span>{linha.capacidade_assento}</span>
+                  <span><span className="bold">Capacidade de assentos: </span>{viagem.linha.capacidade_assento} (Quantidade reduzida por conta do distânciamento social)</span>
                   <br />
                   <span><span className="bold">Total de assentos: </span>{viagem.assentos_disponiveis}</span>
                 </div>
-                <p>Nesta viagem, o ônibus {linha.cod} {linha.nome} parte de {viagem.origem} e tem como destino {viagem.destino}.</p>
+                <p>Nesta viagem, o ônibus {viagem.linha.cod} {viagem.linha.nome} parte de {viagem.origem} e tem como destino {viagem.destino}.</p>
                 <p>A duração estimada para esta viagem é de {duracao_media}, o ônibus deverá partir às {partida.getHours()}:{minutos_partida} e a estimativa de chegada aponta para as {chegada.getHours()}:{minutos_chegada}, passando por um total de {paradas.length} paradas.</p>
 
                 <div className="buttonContainer">
                   {
                     autenticado ?
-                      <button onClick={handleModal}>Reservar um assento</button>
+                      viagem.assentos_disponiveis > 0 ?
+                        <button onClick={handleReserva}>Realizar uma reserva</button>
+                        :
+                        <a>Assentos esgotados.</a>
                       :
                       <a style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => goTo(`/entrar`)}>Faça login para realizar uma reserva</a>
                   }
@@ -144,7 +189,7 @@ export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps)
 
                 <StopContainer>
                   <div className="stopsHeaderContainer">
-                    <h3>Sentido {sentido.sentido} ({paradas.length} paradas)</h3>
+                    <h3>Sentido {viagem.sentido.sentido} ({paradas.length} paradas)</h3>
                   </div>
                   <ul className="stopsContainer">
                     {paradas.map(parada => (
@@ -173,17 +218,14 @@ export default function Viagem({ linha, sentido, paradas, viagem }: ViagemProps)
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { id, lid, sid } = context.query;
+  const { id } = context.query;
 
-  const { data: linha } = await api.get(`/linha?id=${lid}`);
-  const { data: sentido } = await api.get(`/sentido?id=${sid}`);
   const { data: viagem } = await api.get(`/viagem?id=${id}`)
+  const { data: paradas } = await api.get(`/paradas?linha=${viagem.linha.id}&sentido=${viagem.sentido.id}`);
 
   return {
     props: {
-      linha: linha,
-      sentido: sentido,
-      paradas: sentido.paradas,
+      paradas,
       viagem
     }
   }

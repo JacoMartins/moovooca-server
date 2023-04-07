@@ -5,15 +5,13 @@ import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
-import { Bus, CaretLeft, CaretRight, MagnifyingGlass } from 'phosphor-react'
-import { Footer } from '../../styles/global'
+import { Bus, MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
-import { int } from '../../utils/convert'
 import { useState } from 'react'
 import Head from 'next/head'
 
-export default function Search({ linhas, query }) {
+export default function Search({ linhas, query, texto_gerado }) {
   const router = useRouter()
   const [searchInput, setSearchInput] = useState<string>('')
 
@@ -39,6 +37,11 @@ export default function Search({ linhas, query }) {
                 <input type="text" placeholder="Pesquisar" defaultValue={query} onChange={event => setSearchInput(event.target.value)} />
                 <button type='submit'><MagnifyingGlass size={18} weight="bold" color="#2f855a" /></button>
               </form>
+            </div>
+            <div className='gptText'>
+              <span className='bold'>Texto gerado por inteligência artifical: </span>
+              <br />
+              <span>{texto_gerado}</span>
             </div>
           </section>
 
@@ -73,11 +76,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const query = context.query.query || '';
 
   const { data: linhas } = await api.get(`/linhas/search?query=${query}`);
+  const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
 
   return {
     props: {
       linhas,
-      query
+      query,
+      texto_gerado
     }
   }
 }

@@ -7,12 +7,12 @@ import { NavProps } from "../../types/components/nav";
 import { useContext, useState } from "react";
 import ProfileButton from "../ProfileButton";
 import { LabelText } from "../Header/styles";
-import { AuthContext, logout } from "../../contexts/AuthContext";
+import { AuthContext, logout, reload } from "../../contexts/AuthContext";
 
 export default function Nav({ isNavOpen }: NavProps) {
   const router = useRouter();
   const page = router.pathname.split("/")[1];
-  const { autenticado, usuario, reload } = useContext(AuthContext);
+  const { autenticado, usuario } = useContext(AuthContext);
 
   const profileImage = 'https://st2.depositphotos.com/5682790/10456/v/600/depositphotos_104564156-stock-illustration-male-user-icon.jpg';
 
@@ -55,7 +55,7 @@ export default function Nav({ isNavOpen }: NavProps) {
                   </LabelText>
                 </DropdownMenu.Label>
                 <DropdownMenu.Arrow className="DropdownMenuArrow" />
-                <DropdownMenu.Item className="DropdownMenuItem">
+                <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/reservas')}>
                   <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
                     <ListBullets size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
                   </DropdownMenu.Item>
@@ -63,13 +63,6 @@ export default function Nav({ isNavOpen }: NavProps) {
                 </DropdownMenu.Item>
 
                 <DropdownMenu.Separator className="DropdownMenuSeparator" />
-
-                <DropdownMenu.Item className="DropdownMenuItem">
-                  <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
-                    <Gear size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
-                  </DropdownMenu.Item>
-                  Configurações
-                </DropdownMenu.Item>
 
                 <DropdownMenu.Item className="DropdownMenuItem" onClick={handleLogout}>
                   <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>

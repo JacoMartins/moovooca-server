@@ -296,3 +296,21 @@ export const StopContainer = styled('div', {
     }
   }
 });
+
+export const ModalContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  width: '100%',
+
+  button: {
+    width: '100%',
+  },
+
+  '.row': {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '0.5rem'
+  }
+})
