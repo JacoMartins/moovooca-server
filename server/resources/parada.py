@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from db import db
 from models import ParadaModel

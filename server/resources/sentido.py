@@ -4,7 +4,7 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from db import db
 from models import SentidoModel

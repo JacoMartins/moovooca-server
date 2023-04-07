@@ -1,5 +1,5 @@
 from db import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class SentidoModel(db.Model):
   __tablename__ = "sentidos"
@@ -11,7 +11,7 @@ class SentidoModel(db.Model):
   ponto_destino = db.Column(db.String, nullable=False)
   horario_inicio = db.Column(db.String, nullable=False)
   horario_fim = db.Column(db.String, nullable=False)
-  criado_em = db.Column(db.DateTime, default=datetime.utcnow(),nullable=False)
+  criado_em = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc),nullable=False)
   atualizado_em = db.Column(db.DateTime, nullable=True)
 
   linha = db.relationship("LinhaModel", back_populates="sentidos")

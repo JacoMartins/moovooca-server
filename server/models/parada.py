@@ -1,5 +1,5 @@
 from db import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ParadaModel(db.Model):
     __tablename__ = "paradas"
@@ -10,7 +10,7 @@ class ParadaModel(db.Model):
     parada = db.Column(db.String, nullable=False)
     latitude = db.Column(db.String, nullable=False)
     longitude = db.Column(db.String, nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow())
+    criado_em = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
     atualizado_em = db.Column(db.DateTime, nullable=True)
 
     linha = db.relationship("LinhaModel", back_populates="paradas", uselist='false')

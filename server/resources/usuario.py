@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import bcrypt
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, create_refresh_token, get_jwt_identity
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from db import db
 from models import UsuarioModel
@@ -63,7 +63,7 @@ class Usuario(MethodView):
         usuario.nome = usuario_data['nome']
         usuario.sobrenome = usuario_data['sobrenome']
         usuario.email = usuario_data['email']
-        usuario.atualizado_em = datetime.utcnow()
+        usuario.atualizado_em = datetime.now(tz=timezone.utc)
       else: abort(403, "Error trying to update: You can't update an user that isn't you.")
     
     if admin:
@@ -73,7 +73,7 @@ class Usuario(MethodView):
       usuario.email = usuario_data['email']
       usuario.admin = usuario_data['admin']
       usuario.motorista = usuario_data['motorista']
-      usuario.atualizado_em = datetime.utcnow()
+      usuario.atualizado_em = datetime.now(tz=timezone.utc)
 
     try:
       db.session.add(usuario)

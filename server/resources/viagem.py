@@ -4,10 +4,10 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 from flask_jwt_extended import jwt_required, get_jwt
 
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 from db import db
-from models import ViagemModel, SentidoModel, ParadaModel, ReservaModel
+from models import ViagemModel, SentidoModel, ParadaModel, LinhaModel
 from schemas import ViagemSchema, PlainViagemSchema
 from math import radians, sin, atan2, cos, sqrt
 
@@ -45,8 +45,8 @@ class ViagemList(MethodView):
 
     velocidade = 18.32
     
-    inicio = datetime.strptime(f'{data.day}-{data.month}-{data.year} {inicia_as}', '%d-%m-%Y %H:%M:%S')
-    data_fim = datetime.strptime(f'{data.day}-{data.month}-{data.year} {termina_as}', '%d-%m-%Y %H:%M:%S')
+    inicio = datetime.strptime(f'{data.day}-{data.month}-{data.year} {inicia_as} Z-0300', '%d-%m-%Y %H:%M:%S Z%z')
+    data_fim = datetime.strptime(f'{data.day}-{data.month}-{data.year} {termina_as} Z-0300', '%d-%m-%Y %H:%M:%S Z%z')
 
     viagem_exists = ViagemModel.query.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data).all()
     
@@ -87,33 +87,8 @@ class ViagemList(MethodView):
           pago_inteira=0,
           pago_meia=0,
           gratuidade=0,
-          assentos_disponiveis="40",
+          assentos_disponiveis=LinhaModel.query.get_or_404(linha_id).capacidade_assento,
         )
-
-        # letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        # assentos = 40
-
-        # l = 0
-        # a = 0
-
-        # while a < assentos / 2:
-        #     for i in range(1, 3):
-        #         ass_nome = f'{letras[l]}{i}'
-                
-        #         reserva = ReservaModel(
-        #           id_viagem=len(ViagemModel.query.all()),
-        #           assento=ass_nome
-        #         )
-
-        #         try:
-        #           db.session.add(reserva)
-        #           db.session.commit()
-        #         except Exception as e:
-        #           print(e)
-        #           abort(500, "An error ocurred while inserting item to table 'reservas'.")
-
-        #     l += 1
-        #     a += 1
           
         try:
           db.session.add(viagem)
@@ -178,7 +153,7 @@ class Viagem(MethodView):
         viagem.pago_meia = viagem_data["pago_meia"]
         viagem.gratuidade = viagem_data["gratuidade"]
         viagem.assentos_disponiveis = viagem_data["assentos_disponiveis"]
-        viagem.atualizado_em = datetime.utcnow()
+        viagem.atualizado_em = datetime.now(tz=timezone.utc)
       else:
         viagem = ViagemModel(id=viagem_id, **viagem_data)
 

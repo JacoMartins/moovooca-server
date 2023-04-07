@@ -14,41 +14,12 @@ class PlainUsuarioSchema(Schema):
   atualizado_em = fields.DateTime()
 
 
-class PlainViagemSchema(Schema):
-  id = fields.Int(dump_only=True)
-  id_linha = fields.Int(required=True)
-  id_sentido = fields.Int(required=True)
-  data = fields.DateTime(required=True)
-  origem = fields.Str(required=True)
-  destino = fields.Str(required=True)
-  duracao_media = fields.Int(required=True)
-  horario_partida = fields.Str(required=True)
-  horario_chegada = fields.Str(required=True)
-  pago_inteira = fields.Int(required=True)
-  pago_meia = fields.Int(required=True)
-  gratuidade = fields.Int(required=True)
-  assentos_disponiveis = fields.Int(required=True)
-  criado_em = fields.DateTime()
-  atualizado_em = fields.DateTime()
-
-
-class ReservaSchema(Schema):
-  id_viagem = fields.Int(required=True)
-  id_usuario = fields.Int()
-  assento = fields.Int()
-  forma_pagamento = fields.Str(required=True)
-  criado_em = fields.DateTime()
-  atualizado_em = fields.DateTime()
-
-  viagem = fields.Nested(PlainViagemSchema(), dump_only=True)
-  usuario = fields.Nested(PlainUsuarioSchema(), dump_only=True)
-
 
 class PlainReservaSchema(Schema):
   id = fields.Int(dump_only=True)
   id_viagem = fields.Int(required=True)
   id_usuario = fields.Int(required=True)
-  assento = fields.Int(required=True)
+  cod = fields.Int(required=True)
   forma_pagamento = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
@@ -116,6 +87,26 @@ class LinhaSchema(Schema):
   sentidos = fields.List(fields.Nested(PlainSentidoSchema(), dump_only=True))
 
 
+class PlainViagemSchema(Schema):
+  id = fields.Int(dump_only=True)
+  id_linha = fields.Int(required=True)
+  id_sentido = fields.Int(required=True)
+  data = fields.DateTime(required=True)
+  origem = fields.Str(required=True)
+  destino = fields.Str(required=True)
+  duracao_media = fields.Int(required=True)
+  horario_partida = fields.Str(required=True)
+  horario_chegada = fields.Str(required=True)
+  pago_inteira = fields.Int(required=True)
+  pago_meia = fields.Int(required=True)
+  gratuidade = fields.Int(required=True)
+  assentos_disponiveis = fields.Int(required=True)
+  criado_em = fields.DateTime()
+  atualizado_em = fields.DateTime()
+
+  linha = fields.Nested(LinhaSchema(), dump_only=True)
+
+
 class PlainLinhaSchema(Schema):
   id = fields.Int()
   cod = fields.Str(required=True)
@@ -174,3 +165,15 @@ class ViagemSchema(Schema):
   linha = fields.Nested(PlainLinhaSchema(), dump_only=True)
   sentido = fields.Nested(PlainSentidoSchema(), dump_only=True)
   reservas = fields.List(fields.Nested(PlainReservaSchema(), dump_only=True))
+
+class ReservaSchema(Schema):
+  id = fields.Int()
+  id_viagem = fields.Int(required=True)
+  id_usuario = fields.Int()
+  cod = fields.Int()
+  forma_pagamento = fields.Str(required=True)
+  criado_em = fields.DateTime()
+  atualizado_em = fields.DateTime()
+
+  viagem = fields.Nested(PlainViagemSchema(), dump_only=True)
+  usuario = fields.Nested(PlainUsuarioSchema(), dump_only=True)

@@ -8,6 +8,8 @@ from flask_msearch import Search
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+import openai
+
 from models import UsuarioModel
 
 from resources.linha import blp as LinhaBlueprint
@@ -46,6 +48,8 @@ def create_app(db_url=None):
   app.config["JWT_COOKIE_SECURE"] = True
   app.config['JWT_SECRET_KEY'] = os.getenv("SECRET_KEY")
   app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12)
+
+  openai.api_key = os.getenv('OPENAI_API_KEY')
   
   db.init_app(app)
 
