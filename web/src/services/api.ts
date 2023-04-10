@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 import {parseCookies, setCookie} from 'nookies';
 import { logout } from '../contexts/AuthContext';
 import { error_response } from '../types/api/error';
@@ -8,7 +8,7 @@ let isRefreshing = false;
 let failedRequestQueue = [];
 
 export const api = axios.create({
-  baseURL: process.env.API_URL || 'http://192.168.1.2:5000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     Authorization: `Bearer ${cookies['__session']}`
   }

@@ -13,6 +13,7 @@ interface AuthContextData {
   auth(credenciais: AuthCredenciais): Promise<void>;
   autenticado: boolean;
   usuario: Usuario;
+  busy: boolean;
   reload: () => void;
 };
 
@@ -35,6 +36,7 @@ export function logout() {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [usuario, setUsuario] = useState<Usuario>();
   const [autenticado, setAutenticado] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     const {'__session': token} = parseCookies();
@@ -53,10 +55,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function auth({ identificador, senha }: AuthCredenciais) {
     try {
+      setBusy(true)
+
       const {token, refresh_token} = await api.post('/auth', {
         identificador,
         senha
       }).then(res => res.data);
+
+      setBusy(false)
 
       setCookie(undefined, '__session', token, {
         maxAge: 60 * 60 * 24 * 30,
@@ -71,12 +77,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api.defaults.headers["Authorization"] = `Bearer ${token}`;
       reload()
     } catch (err) {
+      setBusy(false)
       console.log(err)
     }
   }
 
   return (
-    <AuthContext.Provider value={{ auth, autenticado, usuario, reload }}>
+    <AuthContext.Provider value={{ auth, autenticado, usuario, reload, busy }}>
       {children}
     </AuthContext.Provider>
   )

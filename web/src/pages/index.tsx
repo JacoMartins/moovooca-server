@@ -2,15 +2,22 @@ import Header from '../components/Header'
 import { BodyContainer, ImgContainer, Main } from '../styles/pages/home'
 
 import { api } from '../services/api'
-import {  useState } from 'react'
-import { MagnifyingGlass } from 'phosphor-react'
+import { useState } from 'react'
+import { CircleNotch, MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import { GetServerSidePropsContext } from 'next'
 
 export default function Home({ linhas }) {
   const [searchInput, setSearchInput] = useState<string>('')
+  const [busy, setBusy] = useState(false)
   const router = useRouter()
+
+  function handleSearch() {
+    event.preventDefault()
+    goTo(`/search?query=${searchInput}`)
+    setBusy(true)
+  }
 
   function goTo(path: string) {
     event.preventDefault()
@@ -33,9 +40,16 @@ export default function Home({ linhas }) {
               <h3 className='lead'>Utilize nosso inteligente sistema de pesquisa para encontrar a rota ideal para você chegar até a UFC.</h3>
             </div>
 
-            <form onSubmit={() => goTo(`/search?query=${searchInput}`)} className='searchContainer'>
+            <form onSubmit={handleSearch} className='searchContainer'>
               <input type="text" placeholder="Pesquisar linha" onChange={event => setSearchInput(event.target.value)} />
-              <button type='submit'><MagnifyingGlass size={18} weight="bold" color="#2f855a" /></button>
+              <button type='submit'>
+                {
+                  busy ?
+                    <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
+                    :
+                    <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
+                }
+              </button>
             </form>
           </section>
 

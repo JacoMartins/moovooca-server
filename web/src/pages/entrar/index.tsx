@@ -7,12 +7,10 @@ import { Logo, Main } from "../../styles/pages/entrar";
 export default function Entrar() {
   const router = useRouter();
 
-  const { auth, reload } = useContext(AuthContext);
-
+  
   const [identificador, setIdentificador] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
-
-  const [busy, setBusy] = useState<boolean>(false);
+  const { auth, busy } = useContext(AuthContext);
 
   const [error, setError] = useState<string>();
 
@@ -28,11 +26,7 @@ export default function Entrar() {
       senha
     };
 
-    setBusy(true);
-
     await auth(credenciais);
-
-    setBusy(false);
   }
 
   return (

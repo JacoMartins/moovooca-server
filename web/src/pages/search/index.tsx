@@ -5,20 +5,30 @@ import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
-import { Bus, MagnifyingGlass } from 'phosphor-react'
+import { Bus, CircleNotch, MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
 
 export default function Search({ linhas, query, texto_gerado }) {
   const router = useRouter()
+  const [busy, setBusy] = useState(false)
   const [searchInput, setSearchInput] = useState<string>('')
 
   function goTo(path: string) {
     event.preventDefault()
     router.push(path)
   }
+
+  function handleSearch() {
+    setBusy(true)
+    goTo(`/search?query=${searchInput}`)
+  }
+
+  useEffect(() => {
+    setBusy(false)
+  }, [linhas])
 
   return (
     <>
@@ -33,16 +43,23 @@ export default function Search({ linhas, query, texto_gerado }) {
             <div className="textContainer">
               <h1>Linhas</h1>
               <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
-              <form onSubmit={() => goTo(`/search?query=${searchInput}`)} className='searchContainer'>
+              <form onSubmit={handleSearch} className='searchContainer'>
                 <input type="text" placeholder="Pesquisar" defaultValue={query} onChange={event => setSearchInput(event.target.value)} />
-                <button type='submit'><MagnifyingGlass size={18} weight="bold" color="#2f855a" /></button>
+                <button type='submit'>
+                  {
+                    busy ?
+                    <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
+                    :
+                    <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
+                  }
+                </button>
               </form>
             </div>
-            <div className='gptText'>
+            {texto_gerado && <div className='gptText'>
               <span className='bold'>Texto gerado por inteligência artifical: </span>
               <br />
               <span>{texto_gerado}</span>
-            </div>
+            </div>}
           </section>
 
           <section className='lineSection'>

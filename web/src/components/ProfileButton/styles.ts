@@ -11,7 +11,9 @@ export const Container = styled('div', {
   overflow: 'hidden',
   cursor: 'pointer',
 
-  img: {
-    height: '2.25rem',
+  '.image': {
+    height: '100%',
+    width: '100%',
+    backgroundSize: 'cover',
   },
 });

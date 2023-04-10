@@ -5,7 +5,7 @@ import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
-import { Bus, CaretLeft, CaretRight, MagnifyingGlass } from 'phosphor-react'
+import { Bus, CaretLeft, CaretRight, CircleNotch, MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
 import { int } from '../../utils/convert'
@@ -15,10 +15,17 @@ import Head from 'next/head'
 export default function Linhas({ linhas, page }) {
   const router = useRouter()
   const [searchInput, setSearchInput] = useState<string>('')
+  const [busy, setBusy] = useState(false)
 
   function goTo(path: string) {
     event.preventDefault()
     router.push(path)
+  }
+
+  function handleSearch() {
+    event.preventDefault()
+    goTo(`/search?query=${searchInput}`)
+    setBusy(true)
   }
 
   return (
@@ -34,9 +41,16 @@ export default function Linhas({ linhas, page }) {
             <div className="textContainer">
               <h1>Linhas</h1>
               <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
-              <form onSubmit={() => goTo(`/search?query=${searchInput}`)} className='searchContainer'>
+              <form onSubmit={handleSearch} className='searchContainer'>
                 <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
-                <button type='submit'><MagnifyingGlass size={18} weight="bold" color="#2f855a" /></button>
+                <button type='submit'>
+                  {
+                    busy ?
+                      <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
+                      :
+                      <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
+                  }
+                </button>
               </form>
             </div>
           </section>
