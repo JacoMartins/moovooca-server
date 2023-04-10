@@ -2,9 +2,10 @@ import { Bus, CircleNotch } from "phosphor-react";
 import { useContext, useState } from "react";
 import { api } from "../../services/api";
 import { Logo, Main } from "../../styles/pages/criar";
-import { RouterContext } from "../../contexts/RouterContext";
+import { useRouter } from "next/router";
 
 export default function CreateAccount() {
+  const router = useRouter()
   const [nome_usuario, setNome_usuario] = useState<string>('');
   const [nome, setNome] = useState<string>('');
   const [sobrenome, setSobrenome] = useState<string>('');
@@ -16,7 +17,9 @@ export default function CreateAccount() {
 
   const [error, setError] = useState<string>();
 
-  const { goTo } = useContext(RouterContext)
+  function goTo(path: string) {
+    router.push(path)
+  }
 
   function checkForm(func: Function) {
     event?.preventDefault();

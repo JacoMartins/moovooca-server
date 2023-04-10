@@ -43,16 +43,16 @@ export default function Home({ linhas }) {
 
           <section>
             <h3>Sobre o projeto</h3>
-            <p>O projeto "moovooca" é uma iniciativa criada pelos estudantes do curso Pet Computação da Universidade Federal do Ceará (UFC), Pedro Yuri e Cauan Victor, com o objetivo de fornecer informações gerais sobre os ônibus que param na UFC e, assim, auxiliar os estudantes no seu deslocamento pela cidade.</p>
+            <p>O projeto &quot;moovooca&quot; é uma iniciativa criada pelos estudantes do curso Pet Computação da Universidade Federal do Ceará (UFC), Pedro Yuri e Cauan Victor, com o objetivo de fornecer informações gerais sobre os ônibus que param na UFC e, assim, auxiliar os estudantes no seu deslocamento pela cidade.</p>
 
             <br />
 
             <h3>Como funciona?</h3>
             <p>O sistema é acessível através de um site na internet e conta com uma interface simples e fácil de usar. Nele, é possível selecionar a linha de ônibus desejada e visualizar as informações de horários de partida e chegada, além de ter acesso a um mapa com o trajeto completo da linha.
 
-              O projeto "moovooca" já está em funcionamento e tem sido muito bem recebido pela comunidade estudantil da UFC. Com sua interface intuitiva e informações precisas, o sistema tem ajudado muitos estudantes a planejar melhor suas rotas de transporte, evitando atrasos e transtornos no seu dia a dia.
+              O projeto &quot;moovooca&quot; já está em funcionamento e tem sido muito bem recebido pela comunidade estudantil da UFC. Com sua interface intuitiva e informações precisas, o sistema tem ajudado muitos estudantes a planejar melhor suas rotas de transporte, evitando atrasos e transtornos no seu dia a dia.
 
-              Em resumo, o "moovooca" é um projeto que exemplifica a importância da tecnologia na solução de problemas cotidianos. A iniciativa dos estudantes da UFC Pedro Yuri e Cauan Victor tem o potencial de melhorar a vida dos estudantes que precisam se deslocar diariamente pela cidade e é uma inspiração para outros jovens que buscam fazer a diferença em sua comunidade através da tecnologia.</p>
+              Em resumo, o &quot;moovooca&quot; é um projeto que exemplifica a importância da tecnologia na solução de problemas cotidianos. A iniciativa dos estudantes da UFC Pedro Yuri e Cauan Victor tem o potencial de melhorar a vida dos estudantes que precisam se deslocar diariamente pela cidade e é uma inspiração para outros jovens que buscam fazer a diferença em sua comunidade através da tecnologia.</p>
           </section>
         </BodyContainer>
       </Main>
