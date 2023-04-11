@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { NavButton, NavContainer } from "./styles";
-import { Gear, House, LineSegments, ListBullets, SignOut } from 'phosphor-react';
+import { Gear, House, LineSegments, ListBullets, MagnifyingGlass, SignOut } from 'phosphor-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import { NavProps } from "../../types/components/nav";
@@ -33,9 +33,13 @@ export default function Nav({ isNavOpen }: NavProps) {
             <House size={20} weight={page === '' ? 'fill' : 'regular'} color="#2f855a" />
             <span>Início</span>
           </NavButton>
-          <NavButton active={page === 'linhas' && true} onClick={() => goTo('/linhas?page=1')}>
+          <NavButton active={page === 'linhas' && true} onClick={() => goTo('/linhas')}>
             <LineSegments size={20} weight={page === 'linhas' ? 'fill' : 'regular'} color="#2f855a" />
             <span>Linhas</span>
+          </NavButton>
+          <NavButton active={page === 'search' && true} onClick={() => goTo('/search?query=')}>
+            <MagnifyingGlass size={20} weight={page === 'search' ? 'fill' : 'regular'} color="#2f855a" />
+            <span>Buscar</span>
           </NavButton>
         </ul>
       </div>

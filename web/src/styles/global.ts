@@ -213,7 +213,7 @@ export const globalStyles = globalCss({
   },
 
   '::-webkit-scrollbar-thumb': {
-    background: '$black_100',
+    background: '$black_200',
     borderRadius: '3px',
     borderBottom: 'solid 1px rgba(0, 0, 0, 0.15)',
     width: '2px',
@@ -221,7 +221,7 @@ export const globalStyles = globalCss({
   },
 
   '::-webkit-scrollbar-thumb:hover': {
-    background: '$black_200'
+    background: '$black_300'
   },
 
   '.DropdownMenuButton': {

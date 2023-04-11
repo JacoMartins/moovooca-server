@@ -41,7 +41,7 @@ export default function Search({ linhas, query, texto_gerado }) {
         <BodyContainer>
           <section className="headerSection">
             <div className="textContainer">
-              <h1>Linhas</h1>
+              <h1>Buscar</h1>
               <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
               <form onSubmit={handleSearch} className='searchContainer'>
                 <input type="text" placeholder="Pesquisar" defaultValue={query} onChange={event => setSearchInput(event.target.value)} />
@@ -71,7 +71,7 @@ export default function Search({ linhas, query, texto_gerado }) {
                       <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                         <div className='firstContainer'>
                           <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                          {linha.nome}
+                          {linha.nome} - {linha.tipo}
                         </div>
                         <div className='lastContainer'>
                           <span>Passa próximo de</span>

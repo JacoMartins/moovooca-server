@@ -6,6 +6,7 @@ export interface Usuario {
   sobrenome: string;
   nome_usuario: string;
   email: string;
+  admin: boolean;
   reservas: reserva[];
   criado_em: Date;
   atualizado_em?: Date;

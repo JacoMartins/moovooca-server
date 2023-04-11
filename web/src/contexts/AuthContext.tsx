@@ -78,7 +78,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       reload()
     } catch (err) {
       setBusy(false)
-      console.log(err)
     }
   }
 

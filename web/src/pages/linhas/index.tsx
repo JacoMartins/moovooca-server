@@ -1,21 +1,30 @@
 import Header from '../../components/Header'
-import { BodyContainer, Main } from '../../styles/pages/linhas'
-
+import { BodyContainer, Main, ModalContainer } from '../../styles/pages/linhas'
+import Modal from 'react-modal'
 import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
-import { Bus, CaretLeft, CaretRight, CircleNotch, MagnifyingGlass } from 'phosphor-react'
+import { Bus, CaretRight, CircleNotch, MagnifyingGlass, X } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
-import { int } from '../../utils/convert'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head'
+import { AuthContext } from '../../contexts/AuthContext'
 
-export default function Linhas({ linhas, page }) {
+export default function Linhas({ head_coletivos, head_privados, page }) {
   const router = useRouter()
+
+  const {autenticado, usuario} = useContext(AuthContext)
+
   const [searchInput, setSearchInput] = useState<string>('')
   const [busy, setBusy] = useState(false)
+
+  const [modal, setModal] = useState(false)
+  const [modalType, setModalType] = useState<number>(0)
+
+  const [coletivos, setColetivos] = useState<linha[]>()
+  const [privados, setPrivados] = useState<linha[]>()
 
   function goTo(path: string) {
     event.preventDefault()
@@ -28,6 +37,29 @@ export default function Linhas({ linhas, page }) {
     setBusy(true)
   }
 
+  function openModal(modalType: number) {
+    setModalType(modalType)
+    setModal(true)
+  }
+
+  function closeModal() {
+    setModal(false)
+  }
+
+  useEffect(() => {
+    if (modalType === 0) {
+      const fetch = async () => await api.get('/linhas?tipo=COLETIVO').then(res => setColetivos(res.data))
+      fetch()
+    }
+
+    if (modalType === 1) {
+      const fetch = async () => await api.get('/linhas?tipo=PRIVADO').then(res => setPrivados(res.data))
+      fetch()
+    }
+  }, [modal])
+
+  Modal.setAppElement('.react-modal')
+
   return (
     <>
       <Head>
@@ -35,6 +67,67 @@ export default function Linhas({ linhas, page }) {
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
       <Main>
+        <Modal
+          isOpen={modal}
+          onRequestClose={closeModal}
+          overlayClassName="react-modal-overlay"
+          className="react-modal-content"
+        >
+          <div className="react-modal-content-header">
+            <h2>
+              Linhas
+              {modalType == 0 && ' Coletivas'}
+              {modalType == 1 && ' Privadas'}
+            </h2>
+            <X className="react-modal-close" size={24} onClick={closeModal} />
+          </div>
+
+          <div className="react-modal-container">
+            <ModalContainer>
+              {modalType == 0 &&
+                <Table header={['Todos']}>
+                  {coletivos?.map((linha: linha) => {
+                    return (
+                      <TableRow key={linha.id} data={{
+                        linha:
+                          <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                            <div className='firstContainer'>
+                              <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
+                              {linha.nome}
+                            </div>
+                            <div className='lastContainer'>
+                              <span>Passa próximo de</span>
+                              <a>{linha.campus}</a>
+                            </div>
+                          </button>,
+                      }} />
+                    )
+                  })}
+                </Table>}
+
+              {modalType == 1 &&
+                <Table header={['Todos']}>
+                {privados?.map((linha: linha) => {
+                  return (
+                    <TableRow key={linha.id} data={{
+                      linha:
+                        <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                          <div className='firstContainer'>
+                            <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
+                            {linha.nome}
+                          </div>
+                          <div className='lastContainer'>
+                            <span>Passa próximo de</span>
+                            <a>{linha.campus}</a>
+                          </div>
+                        </button>,
+                    }} />
+                  )
+                })}
+              </Table>}
+            </ModalContainer>
+          </div>
+        </Modal>
         <Header />
         <BodyContainer>
           <section className="headerSection">
@@ -56,8 +149,41 @@ export default function Linhas({ linhas, page }) {
           </section>
 
           <section className='lineSection'>
-            <Table header={[]}>
-              {linhas.map((linha: linha) => {
+            {head_coletivos.length > 0 &&
+              <Table header={['Transporte Público: Coletivos']}>
+                {head_coletivos.map((linha: linha) => {
+                  return (
+                    <TableRow key={linha.id} data={{
+                      linha:
+                        <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                          <div className='firstContainer'>
+                            <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
+                            {linha.nome}
+                          </div>
+                          <div className='lastContainer'>
+                            <span>Passa próximo de</span>
+                            <a>{linha.campus}</a>
+                          </div>
+                        </button>,
+                    }} />
+                  )
+                })}
+                <TableRow data={{
+                  linha:
+                    <div>
+                      <button onClick={() => openModal(0)}>
+                        <div className='firstContainer'>
+                          Ver mais
+                          <CaretRight size={18} weight='regular' />
+                        </div>
+                      </button>
+                    </div>,
+                }} />
+              </Table>
+            }
+
+            {head_privados.length > 0 && <Table header={['Transporte Privado']}>
+              {head_privados.map((linha: linha) => {
                 return (
                   <TableRow key={linha.id} data={{
                     linha:
@@ -75,20 +201,17 @@ export default function Linhas({ linhas, page }) {
                 )
               })}
               <TableRow data={{
-                info:
-                  <div className='pagination'>
-                    <span>Página {page} de {'0'}</span>
-                    <div className='buttonContainer'>
-                      <button onClick={() => goTo(`/linhas?page=${int(page) - 1}`)} disabled={!(page > 1)}>
-                        <CaretLeft size={18} color={page > 1 ? '#276749' : 'rgba(0, 0, 0, 0.25)'} weight="bold" />
-                      </button>
-                      <button onClick={() => goTo(`/linhas?page=${int(page) + 1}`)} disabled={!(page < 0)}>
-                        <CaretRight size={18} color={page < 0 ? '#276749' : 'rgba(0, 0, 0, 0.25)'} weight="bold" />
-                      </button>
-                    </div>
-                  </div>
+                linha:
+                  <div>
+                    <button onClick={() => openModal(1)}>
+                      <div className='firstContainer'>
+                        Ver mais
+                        <CaretRight size={18} weight='regular' />
+                      </div>
+                    </button>
+                  </div>,
               }} />
-            </Table>
+            </Table>}
           </section>
         </BodyContainer>
       </Main>
@@ -97,17 +220,13 @@ export default function Linhas({ linhas, page }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const page = context.query.page || 1;
-
-  const { data: linhas } = await api.get(`/linhas`);
-  // const { data: contagem_linhas } = await api.get(`/linha_count`);
-
-  // const page_count = Math.ceil(int(contagem_linhas) / 15);
+  const { data: head_coletivos } = await api.get(`/linhas?tipo=COLETIVO&limite=5`);
+  const { data: head_privados } = await api.get(`/linhas?tipo=PRIVADO&limite=5`);
 
   return {
     props: {
-      linhas,
-      page,
+      head_coletivos,
+      head_privados
     }
   }
 }

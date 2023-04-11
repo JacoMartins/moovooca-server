@@ -55,7 +55,7 @@ export const BodyContainer = styled('div', {
     flexDirection: 'column',
     justifyContent: 'space-between',
     gap: '0.5rem',
-    borderBottom: 'solid 1px $black_150',
+    // borderBottom: 'solid 1px $black_150',
     paddingBottom: '0.5rem',
     
     '@media screen and (min-width: 720px)': {
@@ -98,3 +98,23 @@ export const ImgContainer = styled('div', {
   backgroundSize: 'cover',
   backgroundPosition: 'center',
 });
+
+export const ModalContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  width: '100%',
+  height: '25rem',
+  overflow: 'auto',
+
+  button: {
+    width: '100%',
+  },
+
+  '.row': {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '0.5rem'
+  }
+})

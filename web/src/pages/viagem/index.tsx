@@ -3,10 +3,8 @@ import Header from "../../components/Header";
 import Modal from 'react-modal'
 import { api } from "../../services/api";
 import { BodyContainer, Main, ModalContainer, StopContainer } from "../../styles/pages/viagem";
-import { ArrowUpRight, Bus, CaretDown, CheckCircle, CircleNotch, MapPin, X } from "phosphor-react";
+import { Bus, CheckCircle, CircleNotch, MapPin, X } from "phosphor-react";
 import GoogleMapReact from 'google-map-react';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { sentido } from "../../types/api/sentido";
 import { GetServerSidePropsContext } from "next";
 import { ViagemProps } from "../../types/pages/Viagem";
 import Head from "next/head";
@@ -20,7 +18,6 @@ export default function Viagem({ paradas, viagem }: ViagemProps) {
   const [modal, setModal] = useState(false)
   const [reserva, setReserva] = useState<reserva>()
   const [reservaLoading, setReservaLoading] = useState(false)
-  const [error, setError] = useState(false)
   const [status, setStatus] = useState<HttpStatusCode>()
 
   const data_viagem = new Date(viagem.data)
@@ -32,7 +29,7 @@ export default function Viagem({ paradas, viagem }: ViagemProps) {
   const minutos_partida = partida.getMinutes() < 10 ? "0" + partida.getMinutes() : partida.getMinutes()
   const minutos_chegada = chegada.getMinutes() < 10 ? "0" + chegada.getMinutes() : chegada.getMinutes()
 
-  const { autenticado, usuario, reload } = useContext(AuthContext)
+  const { autenticado, usuario } = useContext(AuthContext)
 
   function goTo(path: string) {
     router.push(path)
