@@ -34,7 +34,7 @@ export default function Search({ linhas, query }) {
     }
 
     fetch()
-  }, [linhas])
+  }, [query])
 
   return (
     <>
@@ -54,18 +54,23 @@ export default function Search({ linhas, query }) {
                 <button type='submit'>
                   {
                     busy ?
-                    <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
-                    :
-                    <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
+                      <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
+                      :
+                      <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
                   }
                 </button>
               </form>
             </div>
-            {texto_gerado && <div className='gptText'>
-              <span className='bold'>Texto gerado por inteligência artifical: </span>
+            <div className='gptText'>
+              <span className='bold'>{
+                !texto_gerado ?
+                  'Gerando texto...'
+                  :
+                  'Texto gerado por inteligência artifical: '
+              }</span>
               <br />
-              <span>{texto_gerado}</span>
-            </div>}
+              <span>{texto_gerado && texto_gerado}</span>
+            </div>
           </section>
 
           <section className='lineSection'>
