@@ -107,9 +107,9 @@ export const Main = styled('tr', {
         justifyContent: 'right',
         alignItems: 'right',
         textAlign: 'right',
-        lineHeight: '75%',
+        lineHeight: '100%',
         
-        gap: '0.5rem',
+        gap: '0',
 
         fontSize: '0.875rem',
 

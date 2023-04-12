@@ -11,10 +11,11 @@ import { GetServerSidePropsContext } from 'next'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 
-export default function Search({ linhas, query, texto_gerado }) {
+export default function Search({ linhas, query }) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [searchInput, setSearchInput] = useState<string>('')
+  const [texto_gerado, setTexto_gerado] = useState<string>()
 
   function goTo(path: string) {
     event.preventDefault()
@@ -27,7 +28,12 @@ export default function Search({ linhas, query, texto_gerado }) {
   }
 
   useEffect(() => {
-    setBusy(false)
+    const fetch = async () => {
+      await api.post(`/linhas/search?query=${query}`).then(res => setTexto_gerado(res.data));
+      setBusy(false)
+    }
+
+    fetch()
   }, [linhas])
 
   return (
@@ -93,13 +99,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const query = context.query.query || '';
 
   const { data: linhas } = await api.get(`/linhas/search?query=${query}`);
-  const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
 
   return {
     props: {
       linhas,
       query,
-      texto_gerado
     }
   }
 }

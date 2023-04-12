@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { NavButton, NavContainer } from "./styles";
-import { Gear, House, LineSegments, ListBullets, MagnifyingGlass, SignOut } from 'phosphor-react';
+import { House, LineSegments, ListBullets, MagnifyingGlass, SignOut, Wrench } from 'phosphor-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import { NavProps } from "../../types/components/nav";
@@ -59,6 +59,16 @@ export default function Nav({ isNavOpen }: NavProps) {
                   </LabelText>
                 </DropdownMenu.Label>
                 <DropdownMenu.Arrow className="DropdownMenuArrow" />
+
+                {
+                  autenticado && usuario.admin && <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/admin')}>
+                    <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
+                      <Wrench size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
+                    </DropdownMenu.Item>
+                    Gerenciar
+                  </DropdownMenu.Item>
+                }
+
                 <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/reservas')}>
                   <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
                     <ListBullets size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />

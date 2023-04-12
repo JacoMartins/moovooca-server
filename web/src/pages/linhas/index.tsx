@@ -93,7 +93,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                           <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                             <div className='firstContainer'>
                               <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                              {linha.nome}
+                              {linha.nome} - {linha.tipo}
                             </div>
                             <div className='lastContainer'>
                               <span>Passa próximo de</span>
@@ -114,7 +114,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                         <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                           <div className='firstContainer'>
                             <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                            {linha.nome}
+                            {linha.nome} - {linha.tipo}
                           </div>
                           <div className='lastContainer'>
                             <span>Passa próximo de</span>
@@ -158,7 +158,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                         <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                           <div className='firstContainer'>
                             <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                            {linha.nome}
+                            {linha.nome} - {linha.tipo}
                           </div>
                           <div className='lastContainer'>
                             <span>Passa próximo de</span>
@@ -190,7 +190,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                       <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                         <div className='firstContainer'>
                           <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                          {linha.nome}
+                          {linha.nome} - {linha.tipo}
                         </div>
                         <div className='lastContainer'>
                           <span>Passa próximo de</span>
