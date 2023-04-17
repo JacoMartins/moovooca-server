@@ -1,10 +1,9 @@
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
 import { api } from "../../services/api";
-import { BodyContainer, Main, StopContainer } from "../../styles/pages/linha";
+import { BodyContainer, StopContainer } from "../../styles/pages/linha";
 import { ArrowUpRight, Bus, CaretDown, MapPin } from "phosphor-react";
 import GoogleMapReact from 'google-map-react';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import { Footer } from "../../styles/global";
 import { parada } from "../../types/api/parada";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -12,6 +11,7 @@ import { sentido } from "../../types/api/sentido";
 import { GetServerSidePropsContext } from "next";
 import { LinhaProps } from "../../types/pages/Linha";
 import Head from "next/head";
+import { GlobalMain } from "../../styles/global";
 
 export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps) {
   const router = useRouter()
@@ -35,7 +35,7 @@ export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps)
         <title>Rota da linha {linha.cod} {linha.nome} - Moovooca</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Header />
         <BodyContainer>
           <div className="lineHeader">
@@ -120,7 +120,7 @@ export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps)
             <br />
           </div>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

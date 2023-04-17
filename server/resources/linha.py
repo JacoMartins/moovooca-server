@@ -20,9 +20,17 @@ blp = Blueprint("Linhas", __name__, description="Operações com linhas.")
 class LinhaList(MethodView):
   @blp.response(200, LinhaSchema(many=True))
   def get(self):
-    linhas = LinhaModel.query.all()
+    tipo = req.args.get('tipo')
+    limite = req.args.get('limite')
 
-    return linhas
+    linhas = LinhaModel.query
+    
+    if tipo:
+      linhas = linhas.filter(LinhaModel.tipo == tipo)
+    if limite:
+      linhas = linhas.limit(int(limite))
+
+    return linhas.all()
 
 
 @blp.route('/linhas/search')
@@ -30,56 +38,66 @@ class LinhaList(MethodView):
   @blp.response(200, LinhaSchema(many=True))
   def get(self):
     query = req.args.get('query')
+    keywords = query.split(' ')
+    linhas = LinhaModel.query
 
     if query:
-      linhas = LinhaModel.query.msearch(query, fields=['cod', 'nome', 'campus', 'tipo', 'tags'], limit=20)
-    else:
-      linhas = LinhaModel.query.all()
+      for keyword in keywords:
+        filtered_keyword = keyword.replace('?', '').replace('.', '')
+        linhas = linhas.msearch(filtered_keyword, fields=['cod', 'nome', 'campus', 'tipo', 'tags'], limit=20)
 
-    return linhas
+    return linhas.all()
   
   @blp.response(200)
   def post(self):
     query = req.args.get('query')
+    keywords = query.split(' ')
+    linhas = LinhaModel.query
 
     if query:
-      linhas = LinhaModel.query.msearch(query, fields=['cod', 'nome', 'campus', 'tipo', 'tags'], limit=20).all()
-
-      input_text = 'input: Considere as seguintes informações: '
-
-      for linha in linhas:
-        sentidos = SentidoModel.query.filter(SentidoModel.id_linha == linha.id).all()
-        input_text += f'Encontrada a linha de ônibus com nome "{linha.cod} {linha.nome}", que contém uma parada próxima ao campus {linha.campus}, contendo {len(sentidos)} sentidos, sendo esses: '
-
-        for sentido in sentidos:
-          input_text += f'Sentido {sentido.sentido}, que inicia suas operações as {sentido.horario_inicio}, finalizando todas as suas viagens do dia as {sentido.horario_fim}. As viagens do sentido {sentido.sentido} partem de {sentido.ponto_partida} e chegam ao destino {sentido.ponto_destino}.'
+      for keyword in keywords:
+        filtered_keyword = keyword.replace('?', '').replace('.', '')
+        linhas = linhas.msearch(filtered_keyword, fields=['cod', 'nome', 'campus', 'tipo', 'tags'], limit=20)
       
-      input_text += f'Faça um texto resumido gerando apenas as informações pedidas de acordo com as palavras chave "{str(query)}", utilizando como base as linhas de ônibus encontradas, gerando as informações da forma mais simplificada o possível para o entendimento do usuário, leve mais em consideração a localização de origem e o campus onde o ônibus para.'
+      linhas = linhas.all()
 
-      print(input_text)
+      if len(linhas):
+        input_text = f'input: Considere as seguintes informações: Foram encontradas {len(linhas)} linhas; '
 
-      response = openai.Completion.create(
-          engine="text-davinci-003",
-          prompt=input_text,
-          temperature=0.6,
-          max_tokens=512,
-          top_p=1,
-          frequency_penalty=0,
-          presence_penalty=0,
-          stop=["input:"],
-      )
+        for linha in linhas:
+          sentidos = SentidoModel.query.filter(SentidoModel.id_linha == linha.id).all()
+          input_text += f'Encontrada a linha de ônibus com nome "{linha.cod} {linha.nome}", que contém uma parada próxima ao campus {linha.campus}, contendo {len(sentidos)} sentidos. '
 
-      generated_text = ''
+          if len(linhas) < 15:
+            input_text = input_text[:-2] + ', sendo esses: '
+            for sentido in sentidos:
+              input_text += f'Sentido {sentido.sentido}, que inicia suas operações as {sentido.horario_inicio}, finalizando seu funcionamento as {sentido.horario_fim}. As viagens do sentido {sentido.sentido} partem de {sentido.ponto_partida} e chegam ao destino {sentido.ponto_destino}. '
 
-      for choice in response.choices:
-        generated_text+= choice.text + ''
+        input_text += f'Faça um texto resumido gerando apenas as informações pedidas de acordo com as palavras chave "{str(query)}", utilizando como base as linhas de ônibus encontradas, gerando as informações da forma mais simplificada o possível para o entendimento do usuário, leve mais em consideração a localização de origem e o campus onde o ônibus para. '
 
+        print(input_text)
+
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=input_text,
+            temperature=0.6,
+            max_tokens=512,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=["input:"],
+        )
+
+        generated_text = ''
+
+        for choice in response.choices:
+          generated_text+= choice.text + ''
+
+        return generated_text
+      else:
+        return None
     else:
-      linhas = LinhaModel.query.all()
-
-      return linhas
-
-    return generated_text
+      return None
 
 
 @blp.route("/linha")

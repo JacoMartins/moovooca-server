@@ -409,3 +409,69 @@ export const Footer = styled('footer', {
     padding: '1.5rem 0',
   },
 });
+
+export const GlobalMain = styled('main', {
+  height: '100%',
+  maxWidth: '100%',
+  display: 'flex',
+  gap: '1rem',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  background: 'transparent',
+  padding: '6rem 1.5rem'
+});
+
+export const ErrorMain = styled('main', {
+  height: '100vh',
+  maxWidth: '100vw',
+  display: 'flex',
+  gap: '1rem',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  background: 'transparent',
+
+  '.formContainer': {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem',
+
+    border: 'solid 1px $black_150',
+    borderRadius: '0.625rem',
+
+    width: '20rem',
+
+    '@media screen and (max-width: 768px)': {
+      border: 0,
+    },
+    
+    form: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+
+      width: '100%',
+
+      '.buttonContainer': {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '0.5rem',
+        marginTop: '0.25rem',
+
+        button: {
+          width: '100%',
+          fontWeight: 500,
+
+          '&.createAccount': {
+            backgroundColor: '$green_600',
+            color: '$white'
+          }
+        }
+      }
+    }
+  }
+});

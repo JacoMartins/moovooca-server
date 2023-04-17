@@ -37,7 +37,7 @@ class Usuario(MethodView):
     usuario_data["senha"] = hashPassword.decode('utf-8')
 
     usuario = UsuarioModel(**usuario_data)
-
+    
     try:
       db.session.add(usuario)
       db.session.commit()

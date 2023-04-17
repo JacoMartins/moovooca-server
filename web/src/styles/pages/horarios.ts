@@ -1,17 +1,5 @@
 import { styled } from '../../styles';
 
-export const Main = styled('main', {
-  height: '100%',
-  maxWidth: '100%',
-  display: 'flex',
-  gap: '1rem',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  background: 'transparent',
-  padding: '6rem 1.5rem'
-});
-
 export const BodyContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',

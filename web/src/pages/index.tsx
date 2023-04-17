@@ -1,5 +1,5 @@
 import Header from '../components/Header'
-import { BodyContainer, ImgContainer, Main } from '../styles/pages/home'
+import { BodyContainer } from '../styles/pages/home'
 
 import { api } from '../services/api'
 import { useState } from 'react'
@@ -7,6 +7,7 @@ import { CircleNotch, MagnifyingGlass } from 'phosphor-react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { GetServerSidePropsContext } from 'next'
+import { GlobalMain } from '../styles/global'
 
 export default function Home({ linhas }) {
   const [searchInput, setSearchInput] = useState<string>('')
@@ -31,7 +32,7 @@ export default function Home({ linhas }) {
         <title>Moovooca - Início</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Header />
         <BodyContainer>
           <section className="welcomeSection">
@@ -69,7 +70,7 @@ export default function Home({ linhas }) {
               Em resumo, o &quot;moovooca&quot; é um projeto que exemplifica a importância da tecnologia na solução de problemas cotidianos. A iniciativa dos estudantes da UFC Pedro Yuri e Cauan Victor tem o potencial de melhorar a vida dos estudantes que precisam se deslocar diariamente pela cidade e é uma inspiração para outros jovens que buscam fazer a diferença em sua comunidade através da tecnologia.</p>
           </section>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

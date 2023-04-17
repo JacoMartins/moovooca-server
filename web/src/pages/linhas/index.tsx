@@ -1,5 +1,5 @@
 import Header from '../../components/Header'
-import { BodyContainer, Main, ModalContainer } from '../../styles/pages/linhas'
+import { BodyContainer, ModalContainer } from '../../styles/pages/linhas'
 import Modal from 'react-modal'
 import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
@@ -11,6 +11,7 @@ import { GetServerSidePropsContext } from 'next'
 import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { AuthContext } from '../../contexts/AuthContext'
+import { GlobalMain } from "../../styles/global";
 
 export default function Linhas({ head_coletivos, head_privados, page }) {
   const router = useRouter()
@@ -66,7 +67,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
         <title>Moovooca - Linhas</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Modal
           isOpen={modal}
           onRequestClose={closeModal}
@@ -214,7 +215,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
             </Table>}
           </section>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Header from "../../components/Header";
 import Modal from 'react-modal'
 import { api } from "../../services/api";
-import { BodyContainer, Main, ModalContainer, StopContainer } from "../../styles/pages/viagem";
+import { BodyContainer, ModalContainer, StopContainer } from "../../styles/pages/viagem";
 import { Bus, CheckCircle, CircleNotch, MapPin, X } from "phosphor-react";
 import GoogleMapReact from 'google-map-react';
 import { GetServerSidePropsContext } from "next";
@@ -12,6 +12,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { reserva } from "../../types/api/reserva";
 import { HttpStatusCode } from "axios";
+import { GlobalMain } from "../../styles/global";
 
 export default function Viagem({ paradas, viagem }: ViagemProps) {
   const router = useRouter()
@@ -85,7 +86,7 @@ export default function Viagem({ paradas, viagem }: ViagemProps) {
         <title>Viagem {viagem.id} - {viagem.linha.cod} {viagem.linha.nome} - Moovooca</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Modal
           isOpen={modal}
           onRequestClose={closeModal}
@@ -209,7 +210,7 @@ export default function Viagem({ paradas, viagem }: ViagemProps) {
             <br />
           </div>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

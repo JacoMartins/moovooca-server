@@ -1,5 +1,5 @@
 import Header from '../../components/Header'
-import { BodyContainer, Main } from '../../styles/pages/search'
+import { BodyContainer } from '../../styles/pages/search'
 
 import { api } from '../../services/api'
 import { linha } from '../../types/api/linha'
@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
+import { GlobalMain } from "../../styles/global";
 
 export default function Search({ linhas, query, texto_gerado }) {
   const router = useRouter()
@@ -36,7 +37,7 @@ export default function Search({ linhas, query, texto_gerado }) {
         <title>{query ? `${query} - Pesquisa Moovooca` : `Moovooca - Pesquisa`}</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Header />
         <BodyContainer>
           <section className="headerSection">
@@ -89,7 +90,7 @@ export default function Search({ linhas, query, texto_gerado }) {
             </Table>
           </section>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

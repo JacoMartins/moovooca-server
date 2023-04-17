@@ -1,5 +1,5 @@
 import Header from '../../components/Header'
-import { BodyContainer, Main } from '../../styles/pages/reservas'
+import { BodyContainer } from '../../styles/pages/reservas'
 
 import { api } from '../../services/api'
 import { useContext, useEffect, useState } from 'react'
@@ -14,15 +14,21 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { format_date, format_datetime } from '../../utils/format_datetime'
 import { Logo } from '../../components/Header/styles'
 import { reserva } from '../../types/api/reserva'
+import { GlobalMain } from "../../styles/global";
+import { parseServerSideCookies } from '../../utils/parseServerSideCookies'
+import { Usuario } from '../../types/api/usuario'
 
-export default function Reservas() {
-  const { autenticado } = useContext(AuthContext)
+export default function Reservas({ me }: { me: Usuario }) {
   const [reservas, setReservas] = useState<reserva[]>()
   const [reload, setReload] = useState(false)
   const router = useRouter()
 
   function goTo(route: string) {
     router.push(route)
+  }
+
+  if (!me.id) {
+    goTo('/')
   }
 
   async function handleDeleteBooking(id: number) {
@@ -43,29 +49,13 @@ export default function Reservas() {
     fetch()
   }, [reload])
 
-  if (!autenticado) {
-    return (
-      <Main>
-        <div className='formContainer'>
-          <Logo onClick={() => goTo('/')}>
-            <Bus size={24} weight="regular" color="#276749" />
-            <span>
-              moovooca
-            </span>
-          </Logo>
-          <h4>Não autorizado.</h4>
-        </div>
-      </Main>
-    )
-  }
-
   return (
     <>
       <Head>
         <title>Moovooca - Minhas reservas</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Header />
         <BodyContainer>
           <section className="myBookingsSection">
@@ -95,7 +85,27 @@ export default function Reservas() {
             </Table>
           </section>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const cookies = parseServerSideCookies(context.req.headers.cookie) as { __session: string, __session_refresh: string }
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${cookies.__session}`
+    }
+  }
+
+  const exception_func = (exception) => ({ data: `{"error": "${exception}"}` })
+
+  const { data: me } = await api.get('/me', config).catch(exception_func) as { data: Usuario }
+
+  return {
+    props: {
+      me,
+    }
+  }
 }

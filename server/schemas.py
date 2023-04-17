@@ -14,7 +14,6 @@ class PlainUsuarioSchema(Schema):
   atualizado_em = fields.DateTime()
 
 
-
 class PlainReservaSchema(Schema):
   id = fields.Int(dump_only=True)
   id_viagem = fields.Int(required=True)
@@ -23,6 +22,7 @@ class PlainReservaSchema(Schema):
   forma_pagamento = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
+
 
 class AuthSchema(Schema):
   identificador = fields.Str(required=True)
@@ -35,6 +35,9 @@ class ClienteSchema(Schema):
   nome = fields.Str(dump_only=True)
   sobrenome = fields.Str(dump_only=True)
   email = fields.Str(dump_only=True)
+  admin = fields.Boolean(dump_only=True)
+  motorista = fields.Boolean(dump_only=True)
+
 
 class UsuarioSchema(Schema):
   id = fields.Int()
@@ -62,6 +65,7 @@ class PlainSentidoSchema(Schema):
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
+
 class PlainParadaSchema(Schema):
   id = fields.Int()
   id_linha = fields.Int(required=True)
@@ -71,6 +75,7 @@ class PlainParadaSchema(Schema):
   longitude = fields.Str(required=True)
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
+
 
 class LinhaSchema(Schema):
   id = fields.Int()
@@ -165,6 +170,7 @@ class ViagemSchema(Schema):
   linha = fields.Nested(PlainLinhaSchema(), dump_only=True)
   sentido = fields.Nested(PlainSentidoSchema(), dump_only=True)
   reservas = fields.List(fields.Nested(PlainReservaSchema(), dump_only=True))
+
 
 class ReservaSchema(Schema):
   id = fields.Int()
