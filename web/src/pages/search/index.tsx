@@ -99,13 +99,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const query = context.query.query || '';
 
   const { data: linhas } = await api.get(`/linhas/search?query=${query}`);
-  const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
+  // const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
 
   return {
     props: {
       linhas,
       query,
-      texto_gerado
+      texto_gerado: ''
     }
   }
 }

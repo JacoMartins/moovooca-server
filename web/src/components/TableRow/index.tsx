@@ -4,8 +4,8 @@ import { Main } from "./styles";
 export default function TableRow ({data}:TableRowProps) {
   return(
     <Main>
-      {Object.keys(data).map((item, index) => (
-        <td key={item}>{data[item]}</td>
+      {Object.entries(data).map(([key, value]) => (
+        <td key={key}>{value}</td>
       ))}
     </Main>
   )

@@ -5,8 +5,12 @@ import Table from "../../../../components/Table"
 import TableRow from "../../../../components/TableRow"
 import { api } from "../../../../services/api"
 import { Usuario } from "../../../../types/api/usuario"
+import { viagem } from "../../../../types/api/viagem"
+import { AdminSubMain } from "../../../../styles/pages/admin"
+import EditableData from "../../../../components/EditableData"
+import { viagemOrder } from "../../../../utils/order"
 
-export function AdminViagens() {
+export default function AdminViagens() {
   const router = useRouter()
 
   const [busy, setBusy] = useState(false)
@@ -26,14 +30,14 @@ export function AdminViagens() {
 
   useEffect(() => {
     const fetch = async () => {
-      await api.get('/viagens?lid=1&data=hoje').then(res => setViagens(res.data))
+      await api.get('/viagens').then(res => setViagens(res.data))
     }
 
     fetch()
   }, [])
 
   return (
-    <>
+    <AdminSubMain>
       <h1>Viagens</h1>
       <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
       <form onSubmit={handleSearch} className='searchContainer'>
@@ -49,14 +53,12 @@ export function AdminViagens() {
       </form>
 
       <section className='lineSection'>
-        <Table header={['Todos']}>
-          {viagens.map((linha: Usuario) => {
-            return (
-              <p>Usuario</p>
-            )
-          })}
+        <Table header={Object.keys(viagemOrder).filter(key => key !== 'linha' && key !== 'sentido' && key !== 'reservas')}>
+          {viagens.map(viagem => (
+            <EditableData data={viagem} order={viagemOrder} />
+          ))}
         </Table>
       </section>
-    </>
+    </AdminSubMain>
   )
 }

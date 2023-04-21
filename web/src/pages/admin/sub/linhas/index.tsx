@@ -5,8 +5,11 @@ import Table from "../../../../components/Table"
 import TableRow from "../../../../components/TableRow"
 import { api } from "../../../../services/api"
 import { linha } from "../../../../types/api/linha"
+import EditableData from "../../../../components/EditableData"
+import { AdminSubMain } from "../../../../styles/pages/admin"
+import { linhaOrder } from "../../../../utils/order"
 
-export function AdminLinhas() {
+export default function AdminLinhas() {
   const router = useRouter()
 
   const [linhas, setLinhas] = useState<linha[]>([])
@@ -32,43 +35,33 @@ export function AdminLinhas() {
     fetch()
   }, [])
 
+  const organizedLinha = Object.assign(linhaOrder, linhas[0])
+
   return (
-    <>
-      <h1>Linhas</h1>
-      <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
-      <form onSubmit={handleSearch} className='searchContainer'>
-        <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
-        <button type='submit'>
-          {
-            busy ?
-              <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
-              :
-              <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
-          }
-        </button>
-      </form>
+    <AdminSubMain>
+      <section className='dataSection'>
+        <h1>Linhas</h1>
+        <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
+        <form onSubmit={handleSearch} className='searchContainer'>
+          <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
+          <button type='submit'>
+            {
+              busy ?
+                <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
+                :
+                <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
+            }
+          </button>
+        </form>
+      </section>
 
       <section className='lineSection'>
-        <Table header={['Todos']}>
-          {linhas.map((linha: linha) => {
-            return (
-              <TableRow key={linha.id} data={{
-                linha:
-                  <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
-                    <div className='firstContainer'>
-                      <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                      {linha.nome} - {linha.tipo}
-                    </div>
-                    <div className='lastContainer'>
-                      <span>Passa próximo de</span>
-                      <a>{linha.campus}</a>
-                    </div>
-                  </button>,
-              }} />
-            )
-          })}
+        <Table header={Object.keys(linhaOrder).filter(item => item !== 'sentidos')}>
+          {linhas.map(linha => (
+            <EditableData data={linha} order={linhaOrder} />
+          ))}
         </Table>
       </section>
-    </>
+    </AdminSubMain>
   )
 }

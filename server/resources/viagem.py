@@ -21,14 +21,18 @@ class ViagemList(MethodView):
     linha_id = req.args.get('linha')
     sentido_id = req.args.get('sentido')
     data_arg = req.args.get('data')
-
-    data = datetime(datetime.today().year, datetime.today().month, datetime.today().day) if data_arg == 'hoje' else datetime.strptime(data_arg, '%d-%m-%Y')
-
-    self.post(linha_id, sentido_id, data_arg)
-
-    viagens = ViagemModel.query.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data).all()
     
-    return viagens
+    viagens = ViagemModel.query
+
+    if data_arg:
+      data = datetime(datetime.today().year, datetime.today().month, datetime.today().day) if data_arg == 'hoje' else datetime.strptime(data_arg, '%d-%m-%Y')
+
+      self.post(linha_id, sentido_id, data_arg)
+
+    if linha_id and sentido_id:
+      viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data)
+    
+    return viagens.all()
   
   def post(self, lid, sid, data_):
     linha_id = req.args.get('linha') if not lid else lid

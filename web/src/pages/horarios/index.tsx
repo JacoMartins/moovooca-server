@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Header from "../../components/Header";
 import { api } from "../../services/api";
-import { BodyContainer, Main, StopContainer } from "../../styles/pages/horarios";
+import { BodyContainer, StopContainer } from "../../styles/pages/horarios";
 import { ArrowUpRight, Bus, CaretDown, MapPin } from "phosphor-react";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { sentido } from "../../types/api/sentido";
@@ -13,6 +13,7 @@ import { viagem } from "../../types/api/viagem";
 import TableRow from "../../components/TableRow";
 import { format_datetime } from "../../utils/format_datetime";
 import { format_seconds } from "../../utils/format_seconds";
+import { GlobalMain } from "../../styles/global";
 
 export default function Horario({ linha, sentido, sentidos, viagens }: HorarioProps) {
   const formatted_duracao = format_seconds(viagens[0].duracao_media)
@@ -37,7 +38,7 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
         <title>Rota da linha {linha.cod} {linha.nome} - Moovooca</title>
         <meta name='description' content='Linhas de Ônibus dos Campus UFC' />
       </Head>
-      <Main>
+      <GlobalMain>
         <Header />
         <BodyContainer>
           <div className="lineHeader">
@@ -126,7 +127,7 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
             <br />
           </div>
         </BodyContainer>
-      </Main>
+      </GlobalMain>
     </>
   )
 }

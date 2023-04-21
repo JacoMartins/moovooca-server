@@ -1,25 +1,60 @@
 import Head from "next/head";
-import { Main, BodyContainer, ListButton } from "../../styles/pages/admin";
-import { useEffect, useState } from "react";
+import { BodyContainer, ListButton, Main } from "../../styles/pages/admin";
+import { useState } from "react";
 import { Logo } from "../../styles/pages/entrar";
-import { Bus, CircleNotch, LineSegments, ListBullets, MagnifyingGlass, Path, Users } from "phosphor-react";
+import { Bus } from "phosphor-react";
 import { useRouter } from "next/router";
 import { api } from "../../services/api";
 import { Usuario } from "../../types/api/usuario";
-import { linha } from "../../types/api/linha";
 import { GetServerSidePropsContext } from "next";
 import { parseServerSideCookies } from "../../utils/parseServerSideCookies";
-import { reserva } from "../../types/api/reserva";
-import Table from "../../components/Table";
-import TableRow from "../../components/TableRow";
 import Forbidden from "../forbidden";
-import { AdminSub } from "./sub/meta";
 
-export default function Admin({ linhas, reservas, me }) {
-  const [SPAPage, setSPAPage] = useState('linhas')
-  const subMeta = new AdminSub(SPAPage)
+import { Info, LineSegments, ListBullets, Path, Users } from "phosphor-react"
+import AdminLinhas from "./sub/linhas"
+import AdminReservas from "./sub/reservas"
+import AdminUsuarios from "./sub/usuarios"
+import AdminViagens from "./sub/viagens"
+import AdminDashboard from "./sub/dashboard"
 
-  const [pages, setPages] = useState(subMeta.all)
+export default function Admin({ me }) {
+  const [SPAPage, setSPAPage] = useState('dashboard')
+
+  const pages = [
+    {
+      name: 'dashboard',
+      title: 'Dashboard',
+      icon: <Info size={20} weight={SPAPage === 'dashboard' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminDashboard
+    },
+    {
+      name: 'linhas',
+      title: 'Linhas',
+      icon: <LineSegments size={20} weight={SPAPage === 'linhas' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminLinhas
+    },
+
+    {
+      name: 'reservas',
+      title: 'Reservas',
+      icon: <ListBullets size={20} weight={SPAPage === 'reservas' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminReservas
+    },
+
+    {
+      name: 'viagens',
+      title: 'Viagens',
+      icon: <Path size={20} weight={SPAPage === 'viagens' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminViagens
+    },
+
+    {
+      name: 'usuarios',
+      title: 'Usuários',
+      icon: <Users size={20} weight={SPAPage === 'usuarios' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminUsuarios
+    },
+  ]
 
   const router = useRouter()
 
@@ -50,8 +85,9 @@ export default function Admin({ linhas, reservas, me }) {
               <h4>Administrador</h4>
               <hr></hr>
               <div className="listContainer">
+
                 {pages.map(page => (
-                  <ListButton isActive={SPAPage === page.name} onClick={() => setSPAPage(page.name)}>
+                  <ListButton key={page.name} isActive={SPAPage === page.name} onClick={() => setSPAPage(page.name)}>
                     {page.icon}
                     {page.title}
                   </ListButton>
@@ -61,7 +97,7 @@ export default function Admin({ linhas, reservas, me }) {
           </div>
 
           <div className="content">
-            {pages.map(page => (SPAPage === page.name && <page.Content />))}
+            {pages.map(page => (SPAPage === page.name && <page.Content key={page.name + "_content"} />))}
           </div>
         </BodyContainer>
       </Main>
@@ -79,16 +115,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const exception_func = (exception) => ({ data: `null` })
-
-  const { data: linhas } = await api.get('/linhas').catch(exception_func) as { data: linha[] }
-  const { data: reservas } = await api.get('/reservas', config).catch(exception_func) as { data: reserva[] }
   const { data: me } = await api.get('/me', config).catch(exception_func) as { data: Usuario }
-
 
   return {
     props: {
-      linhas,
-      reservas,
       me,
     }
   }

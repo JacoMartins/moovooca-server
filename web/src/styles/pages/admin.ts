@@ -14,9 +14,12 @@ export const Main = styled('main', {
 
 export const BodyContainer = styled('div', {
     display: 'grid',
-    gridTemplateColumns: '20% 1fr',
     maxHeight: '100vh',
     width: '100%',
+
+    '@media screen and (min-width: 768px)': {
+        gridTemplateColumns: '20% 1fr',
+    },
 
     '.sidebar': {
         display: 'flex',
@@ -52,7 +55,7 @@ export const BodyContainer = styled('div', {
     '.content': {
         display: 'flex',
         flexDirection: 'column',
-        maxHeight: 'calc(100vh - 4rem)',
+        height: 'calc(100vh - 4rem)',
         padding: '2rem 2rem',
         overflow: 'auto',
         background: 'rgba(47, 133, 90, 0.08)',
@@ -127,6 +130,27 @@ export const ListButton = styled('button', {
             },
             false: {
                 fontWeight: 400
+            }
+        }
+    }
+})
+
+export const AdminSubMain = styled('main', {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+    width: '100%',
+    height: '100%',
+
+    '.lineSection': {
+        maxWidth: '100%',
+        height: 'auto',
+        overflow: 'auto',
+
+        table: {
+            th: {
+                borderRight: 'solid 2px $black_150'
             }
         }
     }

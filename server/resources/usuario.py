@@ -21,11 +21,16 @@ salt = bcrypt.gensalt()
 @blp.route('/usuario')
 class Usuario(MethodView):
   @jwt_required()
-  @blp.response(200, UsuarioSchema)
+  @blp.response(200, UsuarioSchema(many=True))
   def get(self):
-    usuario_id = get_jwt_identity() 
-    usuario = UsuarioModel.query.get_or_404(usuario_id)
+    usuario_admin = get_jwt()['admin']
+    usuario_id = get_jwt_identity()
 
+    if usuario_admin:
+      usuario = UsuarioModel.query.all()
+    else:
+      usuario = UsuarioModel.query.get_or_404(usuario_id).all()
+    
     return usuario
   
   @blp.arguments(PlainUsuarioSchema)

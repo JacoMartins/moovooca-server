@@ -5,8 +5,11 @@ import Table from "../../../../components/Table"
 import TableRow from "../../../../components/TableRow"
 import { api } from "../../../../services/api"
 import { reserva } from "../../../../types/api/reserva"
+import { AdminSubMain } from "../../../../styles/pages/admin"
+import EditableData from "../../../../components/EditableData"
+import { reservaOrder } from "../../../../utils/order"
 
-export function AdminReservas() {
+export default function AdminReservas() {
   const router = useRouter()
 
   const [busy, setBusy] = useState(false)
@@ -33,7 +36,7 @@ export function AdminReservas() {
   }, [])
 
   return (
-    <>
+    <AdminSubMain>
       <h1>Reservas</h1>
       <h3 className='lead'>Pesquise ou selecione a linha que fica melhor para você.</h3>
       <form onSubmit={handleSearch} className='searchContainer'>
@@ -49,22 +52,12 @@ export function AdminReservas() {
       </form>
 
       <section className='lineSection'>
-        <Table header={['Todos']}>
-          {reservas.map((linha: reserva) => {
-            return (
-              <TableRow key={linha.id} data={{
-                linha:
-                  <button>
-                    <div className='firstContainer'>
-                      <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                      {linha.cod}
-                    </div>
-                  </button>,
-              }} />
-            )
-          })}
+        <Table header={Object.keys(reservaOrder)}>
+          {reservas.map(reservas => (
+            <EditableData data={reservas} order={reservaOrder}/>
+          ))}
         </Table>
       </section>
-    </>
+    </AdminSubMain>
   )
 }
