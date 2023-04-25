@@ -61,7 +61,7 @@ export default function Nav({ isNavOpen }: NavProps) {
                 <DropdownMenu.Arrow className="DropdownMenuArrow" />
 
                 {
-                  autenticado && usuario.admin && <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/admin')}>
+                  autenticado && usuario.admin && <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/admin/dashboard')}>
                     <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
                       <Wrench size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
                     </DropdownMenu.Item>

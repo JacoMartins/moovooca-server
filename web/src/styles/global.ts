@@ -288,6 +288,39 @@ export const globalStyles = globalCss({
     }
   },
 
+  '.DropdownSubTriggerItem': {
+    fontSize: '0.9375rem',
+    fontWeight: '400',
+    lineHeight: 1,
+    color: '$black_800',
+    borderRadius: '0.25rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.375rem 0.5rem',
+    position: 'relative',
+    width: 'auto',
+    paddingLeft: '1.5rem',
+    userSelect: 'none',
+    outline: 'none',
+    border: 'solid 1px transparent',
+    transition: '0.15s ease-in-out',
+
+    '@media screen and (max-width: 720px)': {
+      padding: '0.75rem 0.75rem',
+      paddingLeft: '2rem',
+    },
+
+    '&:hover': {
+      backgroundColor: '$black_80',
+    },
+
+    '&:active': {
+      backgroundColor: '$black_80',
+      border: 'solid 1px $black_100',
+    }
+  },
+
   '.DropdownMenuSeparator': {
     height: '1px',
     backgroundColor: '$black_200',

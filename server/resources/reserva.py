@@ -1,7 +1,7 @@
 from flask import request as req
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from sqlalchemy.exc import SQLAlchemyError
 
 from datetime import datetime, timezone, timezone
@@ -21,8 +21,12 @@ class ReservaList(MethodView):
   @blp.response(200, ReservaSchema(many=True))
   def get(self):
     usuario_id = get_jwt_identity()
+    usuario_admin = get_jwt()['admin']
 
-    reservas = ReservaModel.query.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
+    if usuario_admin:
+      reservas = ReservaModel.query.all()
+    else:
+      reservas = ReservaModel.query.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
 
     return reservas
   
@@ -72,27 +76,63 @@ class Reserva(MethodView):
   @blp.response(200, ReservaSchema)
   def put(self, reserva_data):
     usuario_id = get_jwt_identity()
+    usuario_admin = get_jwt()['admin']
 
     reserva_id = req.args.get('id')
     reserva = ReservaModel.query.get(reserva_id)
 
-    if reserva.id_usuario == usuario_id:
+    if usuario_admin:
       if reserva:
         reserva.id_viagem = reserva_data["id_viagem"]
-        reserva.id_usuario = usuario_id
-        reserva.assento = reserva_data["assento"]
+        reserva.id_usuario = reserva_data["id_usuario"]
+        reserva.cod = reserva_data["cod"]
         reserva.forma_pagamento = reserva_data["forma_pagamento"]
         reserva.atualizado_em = datetime.now(tz=timezone.utc)
+
+        try:
+          db.session.add(reserva)
+          db.session.commit()
+        except SQLAlchemyError:
+          abort(500, "An error ocurred while updating item from table 'reserva'.")
+        
+        return reserva
       else:
         reserva = ReservaModel(id=reserva_id, **reserva_data)
 
-      try:
-        db.session.add(reserva)
-        db.session.commit()
-      except SQLAlchemyError:
-        abort(500, "An error ocurred while updating item from table 'reserva'.")
+        try:
+          db.session.add(reserva)
+          db.session.commit()
+        except SQLAlchemyError:
+          abort(500, "An error ocurred while updating item from table 'reserva'.")
+        
+        return reserva
+    else:
+      if reserva.id_usuario == usuario_id:
+        if reserva:
+          reserva.id_viagem = reserva_data["id_viagem"]
+          reserva.id_usuario = usuario_id
+          reserva.cod = reserva_data["cod"]
+          reserva.forma_pagamento = reserva_data["forma_pagamento"]
+          reserva.atualizado_em = datetime.now(tz=timezone.utc)
 
-      return reserva
+          try:
+            db.session.add(reserva)
+            db.session.commit()
+          except SQLAlchemyError:
+            abort(500, "An error ocurred while updating item from table 'reserva'.")
+          
+          return reserva
+        else:
+          reserva = ReservaModel(id=reserva_id, **reserva_data)
+
+          try:
+            db.session.add(reserva)
+            db.session.commit()
+          except SQLAlchemyError:
+            abort(500, "An error ocurred while updating item from table 'reserva'.")
+          
+          return reserva
+        
     abort(401, "Identitification error.")
 
   @jwt_required()

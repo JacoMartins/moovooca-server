@@ -1,6 +1,7 @@
 import { styled } from "../../styles";
 
 export const Tr = styled('tr', {
+  width: '100%',
   backgroundColor: '$white_300',
   borderBottom: 'solid 2px $black_150',
   transition: '0.15s',
@@ -19,5 +20,5 @@ export const Tr = styled('tr', {
   '&:active': {
     backgroundColor: '$white_300',
     boxShadow: '0 3px 6px rgba(0, 0, 0, 0.15)'
-  }
+  },
 })

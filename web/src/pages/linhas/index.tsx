@@ -16,13 +16,11 @@ import { GlobalMain } from "../../styles/global";
 export default function Linhas({ head_coletivos, head_privados, page }) {
   const router = useRouter()
 
-  const {autenticado, usuario} = useContext(AuthContext)
-
   const [searchInput, setSearchInput] = useState<string>('')
   const [busy, setBusy] = useState(false)
 
-  const [modal, setModal] = useState(false)
   const [modalType, setModalType] = useState<number>(0)
+  const [modal, setModal] = useState(false)
 
   const [coletivos, setColetivos] = useState<linha[]>()
   const [privados, setPrivados] = useState<linha[]>()
@@ -57,7 +55,7 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
       const fetch = async () => await api.get('/linhas?tipo=PRIVADO').then(res => setPrivados(res.data))
       fetch()
     }
-  }, [modal])
+  }, [modalType])
 
   Modal.setAppElement('.react-modal')
 

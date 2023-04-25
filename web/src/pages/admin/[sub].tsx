@@ -18,7 +18,9 @@ import AdminViagens from "./sub/viagens"
 import AdminDashboard from "./sub/dashboard"
 
 export default function Admin({ me }) {
-  const [SPAPage, setSPAPage] = useState('dashboard')
+  const router = useRouter()
+  const { sub } = router.query
+  const [SPAPage, setSPAPage] = useState(sub)
 
   const pages = [
     {
@@ -56,10 +58,13 @@ export default function Admin({ me }) {
     },
   ]
 
-  const router = useRouter()
-
   function goTo(route: string) {
     router.push(route)
+  }
+
+  function handleSub(page: string) {
+    goTo(`/admin/${page}`)
+    setSPAPage(page)
   }
 
   if (!me || !me.admin) {
@@ -87,7 +92,7 @@ export default function Admin({ me }) {
               <div className="listContainer">
 
                 {pages.map(page => (
-                  <ListButton key={page.name} isActive={SPAPage === page.name} onClick={() => setSPAPage(page.name)}>
+                  <ListButton key={page.name} isActive={SPAPage === page.name} onClick={() => handleSub(page.name)}>
                     {page.icon}
                     {page.title}
                   </ListButton>

@@ -55,7 +55,9 @@ def create_app(db_url=None):
 
   api = Api(app)
   search = Search(app)
-  cors = CORS(app)
+  cors = CORS(app, resources={
+    r'/*': {'origins': '*'},
+  })
   
   search.init_app(app)
 
