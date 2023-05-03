@@ -2,9 +2,10 @@ import { linha } from "./linha";
 import { sentido } from "./sentido";
 
 export interface viagem {
-  id: number;
-  id_linha: number;
-  id_sentido: number;
+  id: number | null;
+  id_linha: number | null;
+  id_sentido: number | null;
+  id_motorista: number | null;
   data: string;
   origem: string;
   destino: string;
@@ -15,15 +16,13 @@ export interface viagem {
   pago_meia: number;
   gratuidade: number;
   assentos_disponiveis: number;
-  assentos_ocupados: number;
   criado_em: string;
   atualizado_em: string;
-  linha: linha;
-  sentido: sentido;
+  linha?: linha;
+  sentido?: sentido;
 }
 
-export interface response_viagem {
-  status: number;
-  message: string;
-  data: viagem[];
+export interface viagem_co {
+  name: string,
+  fields: viagem
 }

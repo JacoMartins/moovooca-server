@@ -143,6 +143,37 @@ export const AdminSubMain = styled('main', {
     width: '100%',
     height: '100%',
 
+    '.addButton': {
+        position: 'absolute',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '$green_500',
+        color: '$black_800',
+        border: 'solid 1px $black_50',
+        borderRadius: '5rem',
+        padding: '0.5rem 0.5rem',
+        fontSize: '1rem',
+        fontWeight: 400,
+        cursor: 'pointer',
+        outline: 0,
+
+        bottom: '1rem',
+        right: '1rem',
+
+        '&:hover': {
+            transition: 'all 0.15s ease-in-out',
+            backgroundColor: '$green_600',
+        },
+
+        '&:active': {
+            border: 'solid 1px $black_150',
+            filter: 'brightness(0.95)',
+            transition: 'all 0.15s ease-in-out',
+        }
+    },
+
     '.lineSection': {
         maxWidth: '100%',
         height: 'auto',

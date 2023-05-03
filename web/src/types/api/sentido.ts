@@ -1,6 +1,6 @@
 export interface sentido {
-  id: number;
-  id_linha: number;
+  id: number | null;
+  id_linha: number | null;
   sentido: string;
   ponto_partida: string;
   ponto_destino: string;
@@ -10,8 +10,7 @@ export interface sentido {
   atualizado_em: string;
 }
 
-export interface response_sentido {
-  status: number;
-  message: string;
-  data: sentido[];
+export interface sentido_co {
+  name: string,
+  fields: sentido
 }

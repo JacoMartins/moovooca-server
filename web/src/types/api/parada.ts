@@ -1,15 +1,14 @@
 export interface parada {
-  id: number;
-  id_linha: number;
-  id_sentido: number;
+  id: number | null;
+  id_linha: number | null;
+  id_sentido: number | null;
   parada: string;
   minutos: number;
   criado_em: string;
   atualizado_em: string;
 }
 
-export interface response_parada {
-  status: number;
-  message: string;
-  data: parada[];
+export interface parada_co {
+  name: string,
+  fields: parada
 }

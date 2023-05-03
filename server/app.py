@@ -118,9 +118,9 @@ def create_app(db_url=None):
       }), 401
     )
 
-  @app.before_first_request
-  def create_tables():
-    db.create_all()
+  # @app.before_first_request
+  # def create_tables():
+  #   db.create_all()
 
   api.register_blueprint(LinhaBlueprint)
   api.register_blueprint(ParadaBlueprint)

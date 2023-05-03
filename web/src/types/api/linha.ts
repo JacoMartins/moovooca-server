@@ -1,7 +1,7 @@
 import { sentido } from "./sentido";
 
 export interface linha {
-  id: number;
+  id: number | null;
   cod: number;
   nome: string;
   campus: string;
@@ -11,11 +11,10 @@ export interface linha {
   capacidade_assento: number;
   criado_em: Date;
   atualizado_em: Date;
-  sentidos: [sentido];
+  sentidos?: sentido[];
 }
 
-export interface response_linha {
-  status: number;
-  message: string;
-  data: linha[];
+export interface linha_co {
+  name: string,
+  fields: linha
 }
