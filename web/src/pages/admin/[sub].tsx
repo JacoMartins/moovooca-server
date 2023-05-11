@@ -2,7 +2,7 @@ import Head from "next/head";
 import { BodyContainer, ListButton, Main } from "../../styles/pages/admin";
 import { useState } from "react";
 import { Logo } from "../../styles/pages/entrar";
-import { Bus } from "phosphor-react";
+import { Bus, MapPin } from "phosphor-react";
 import { useRouter } from "next/router";
 import { api } from "../../services/api";
 import { Usuario } from "../../types/api/usuario";
@@ -12,6 +12,7 @@ import Forbidden from "../forbidden";
 
 import { Info, LineSegments, ListBullets, Path, Users } from "phosphor-react"
 import AdminLinhas from "./sub/linhas"
+import AdminParadas from "./sub/paradas"
 import AdminReservas from "./sub/reservas"
 import AdminUsuarios from "./sub/usuarios"
 import AdminViagens from "./sub/viagens"
@@ -34,6 +35,13 @@ export default function Admin({ me }) {
       title: 'Linhas',
       icon: <LineSegments size={20} weight={SPAPage === 'linhas' ? 'fill' : 'regular'} color="#2f855a" />,
       Content: AdminLinhas
+    },
+
+    {
+      name: 'paradas',
+      title: 'Paradas',
+      icon: <MapPin size={20} weight={SPAPage === 'paradas' ? 'fill' : 'regular'} color="#2f855a" />,
+      Content: AdminParadas
     },
 
     {

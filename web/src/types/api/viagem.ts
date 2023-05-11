@@ -22,6 +22,12 @@ export interface viagem {
   sentido?: sentido;
 }
 
+export interface paginated_viagens {
+  page: string;
+  pages: string;
+  items: viagem[];
+}
+
 export interface viagem_co {
   name: string,
   fields: viagem

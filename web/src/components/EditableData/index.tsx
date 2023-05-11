@@ -21,12 +21,7 @@ export default function EditableData({ data, tableSchema, update, setUpdate, han
   const organizedData = Object.assign(tableSchema.fields, data)
   const dataValues = Object.values(organizedData)
   const filteredValues = dataValues.map(value => value === null ? '' : value)
-
-  function goTo(route: string) {
-    event.preventDefault()
-    router.push(route)
-  }
-
+  
   async function handleDeleteItem(id: number) {
     await api.delete(`/${tableSchema.name}?id=${id}`)
     setUpdate(!update)

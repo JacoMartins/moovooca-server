@@ -13,6 +13,13 @@ export interface reserva {
   usuario?: Usuario;
 }
 
+export interface paginated_reservas {
+  page: string;
+  pages: string;
+  items: reserva[];
+}
+
+
 export interface reserva_co {
   name: string,
   fields: reserva

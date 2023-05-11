@@ -10,6 +10,12 @@ export interface sentido {
   atualizado_em: string;
 }
 
+export interface paginated_sentidos {
+  page: string;
+  pages: string;
+  items: sentido[];
+}
+
 export interface sentido_co {
   name: string,
   fields: sentido

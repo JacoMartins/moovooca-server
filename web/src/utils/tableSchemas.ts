@@ -1,4 +1,5 @@
 import { linha_co } from "../types/api/linha"
+import { parada_co } from "../types/api/parada"
 import { reserva_co } from "../types/api/reserva"
 import { usuario_co } from "../types/api/usuario"
 import { viagem_co } from "../types/api/viagem"
@@ -14,8 +15,21 @@ export const linhaSchema:linha_co = {
     valor_meia: 0,
     tipo: '',
     capacidade_assento: 0,
-    criado_em: new Date(),
-    atualizado_em: new Date()
+    criado_em: new Date().toLocaleDateString(),
+    atualizado_em: new Date().toLocaleDateString()
+  }
+}
+
+export const paradaSchema:parada_co = {
+  name: 'parada',
+  fields: {
+    id: null,
+    id_linha: 0,
+    id_sentido: 0,
+    parada: '',
+    minutos: 0,
+    criado_em: '',
+    atualizado_em: '',
   }
 }
 
@@ -38,12 +52,13 @@ export const usuarioSchema:usuario_co = {
     id: null,
     nome_usuario: '',
     nome: '',
+    senha: '',
     sobrenome: '',
     email: '',
     motorista: 0,
     admin: 0,
-    criado_em: new Date(),
-    atualizado_em: new Date(),
+    criado_em: new Date().toUTCString(),
+    atualizado_em: new Date().toUTCString(),
   }
 }
 

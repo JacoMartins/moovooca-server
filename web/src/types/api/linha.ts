@@ -9,9 +9,15 @@ export interface linha {
   valor_meia: number;
   tipo: string;
   capacidade_assento: number;
-  criado_em: Date;
-  atualizado_em: Date;
+  criado_em: string;
+  atualizado_em: string;
   sentidos?: sentido[];
+}
+
+export interface paginated_linhas {
+  page: string;
+  pages: string;
+  items: linha[];
 }
 
 export interface linha_co {
