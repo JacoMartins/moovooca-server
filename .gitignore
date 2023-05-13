@@ -1,6 +1,7 @@
 # python flask
 ./server/.flaskenv
 ./server/.venv
+./server/.wvenv
 
 # dependencies
 ./web/node_modules

@@ -9,7 +9,7 @@ from random import randint
 
 from db import db
 from models import ReservaModel, ViagemModel
-from schemas import ReservaSchema
+from schemas import ReservaSchema, ReservaPaginationSchema
 
 
 blp = Blueprint("Reservas", __name__, description="Operações com reservas.")
@@ -18,17 +18,28 @@ blp = Blueprint("Reservas", __name__, description="Operações com reservas.")
 @blp.route('/reservas')
 class ReservaList(MethodView):
   @jwt_required()
-  @blp.response(200, ReservaSchema(many=True))
+  @blp.response(200, ReservaPaginationSchema)
   def get(self):
     usuario_id = get_jwt_identity()
     usuario_admin = get_jwt()['admin']
 
-    if usuario_admin:
-      reservas = ReservaModel.query.all()
-    else:
-      reservas = ReservaModel.query.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
+    page = req.args.get('page', 1, type=int)
+    per_page = 15
 
-    return reservas
+    reservas = ReservaModel.query
+
+    if not usuario_admin:
+      reservas = reservas.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
+
+    reservas = reservas.paginate(page=page, per_page=per_page, error_out=False)
+
+    pagination_object = {
+      "items": reservas.items,
+      "page": reservas.page,
+      "pages": reservas.pages
+    }
+
+    return pagination_object
   
 
 @blp.route('/reserva')

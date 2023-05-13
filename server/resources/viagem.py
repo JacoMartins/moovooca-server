@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 
 from db import db
 from models import ViagemModel, SentidoModel, ParadaModel, LinhaModel
-from schemas import ViagemSchema, PlainViagemSchema
+from schemas import ViagemSchema, ViagemPaginationSchema
 from math import radians, sin, atan2, cos, sqrt
 
 blp = Blueprint("Viagens", __name__, description="Operações com viagens.")
@@ -16,11 +16,14 @@ blp = Blueprint("Viagens", __name__, description="Operações com viagens.")
 
 @blp.route('/viagens')
 class ViagemList(MethodView):
-  @blp.response(200, ViagemSchema(many=True))
+  @blp.response(200, ViagemPaginationSchema)
   def get(self):
     linha_id = req.args.get('linha')
     sentido_id = req.args.get('sentido')
     data_arg = req.args.get('data')
+    
+    page = req.args.get('page', 1, type=int)
+    per_page = 15
     
     viagens = ViagemModel.query
 
@@ -31,8 +34,16 @@ class ViagemList(MethodView):
 
     if linha_id and sentido_id:
       viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data)
+
+    viagens = ViagemModel.query.paginate(page=page, per_page=per_page, error_out=False)
+
+    pagination_object = {
+      "items": viagens.items,
+      "page": viagens.page,
+      "pages": viagens.pages
+    }
     
-    return viagens.all()
+    return pagination_object
   
   def post(self, lid, sid, data_):
     linha_id = req.args.get('linha') if not lid else lid

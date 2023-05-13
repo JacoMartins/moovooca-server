@@ -183,3 +183,39 @@ class ReservaSchema(Schema):
 
   viagem = fields.Nested(PlainViagemSchema(), dump_only=True)
   usuario = fields.Nested(PlainUsuarioSchema(), dump_only=True)
+
+
+class LinhaPaginationSchema(Schema):
+  items = fields.List(fields.Nested(LinhaSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)
+
+
+class SentidoPaginationSchema(Schema):
+  items = fields.List(fields.Nested(SentidoSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)
+
+
+class ParadaPaginationSchema(Schema):
+  items = fields.List(fields.Nested(ParadaSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)
+
+
+class ReservaPaginationSchema(Schema):
+  items = fields.List(fields.Nested(ReservaSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)
+
+
+class UsuarioPaginationSchema(Schema):
+  items = fields.List(fields.Nested(UsuarioSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)
+
+
+class ViagemPaginationSchema(Schema):
+  items = fields.List(fields.Nested(ViagemSchema(), dump_only=True))
+  page = fields.Str(required=True)
+  pages = fields.Str(required=True)

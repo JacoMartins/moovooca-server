@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 from db import db
 from models import SentidoModel
-from schemas import SentidoSchema
+from schemas import SentidoSchema, SentidoPaginationSchema
 
 
 blp = Blueprint("Sentidos", __name__, description="Operações com sentidos.")
@@ -16,16 +16,27 @@ blp = Blueprint("Sentidos", __name__, description="Operações com sentidos.")
 
 @blp.route('/sentidos')
 class SentidoList(MethodView):
-  @blp.response(200, SentidoSchema(many=True))
+  @blp.response(200, SentidoPaginationSchema)
   def get(self):
     linha_id = req.args.get('linha')
+
+    page = req.args.get('page', 1, type=int)
+    per_page = 15
+
+    sentidos = SentidoModel.query
     
     if linha_id:
-      sentidos = SentidoModel.query.filter(SentidoModel.id_linha == linha_id)
-    else:
-      sentidos = SentidoModel.query.all()
+      sentidos = sentidos.filter(SentidoModel.id_linha == linha_id)
+    
+    sentidos = sentidos.paginate(page=page, per_page=per_page, error_out=False)
 
-    return sentidos
+    pagination_object = {
+      "items": sentidos.items,
+      "page": sentidos.page,
+      "pages": sentidos.pages
+    }
+
+    return pagination_object
 
 @blp.route('/sentido')
 class Sentido(MethodView):

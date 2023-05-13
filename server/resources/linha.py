@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from db import db
 from models import LinhaModel, SentidoModel
-from schemas import LinhaSchema, PlainLinhaSchema
+from schemas import LinhaSchema, LinhaPaginationSchema
 
 
 blp = Blueprint("Linhas", __name__, description="Operações com linhas.")
@@ -18,10 +18,13 @@ blp = Blueprint("Linhas", __name__, description="Operações com linhas.")
 
 @blp.route('/linhas')
 class LinhaList(MethodView):
-  @blp.response(200, LinhaSchema(many=True))
+  @blp.response(200, LinhaPaginationSchema)
   def get(self):
     tipo = req.args.get('tipo')
     limite = req.args.get('limite')
+
+    page = req.args.get('page', 1, type=int)
+    per_page = 15
 
     linhas = LinhaModel.query
     
@@ -29,8 +32,16 @@ class LinhaList(MethodView):
       linhas = linhas.filter(LinhaModel.tipo == tipo)
     if limite:
       linhas = linhas.limit(int(limite))
+    
+    linhas = linhas.paginate(page=page, per_page=per_page, error_out=False)
 
-    return linhas.all()
+    pagination_object = {
+      "items": linhas.items,
+      "page": linhas.page,
+      "pages": linhas.pages
+    }
+
+    return pagination_object
 
 
 @blp.route('/linhas/search')

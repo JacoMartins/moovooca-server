@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from db import db
 from models import ParadaModel
-from schemas import ParadaSchema, PlainParadaSchema
+from schemas import ParadaSchema, ParadaPaginationSchema
 
 
 blp = Blueprint("Paradas", __name__, description="Operações com paradas.")
@@ -17,17 +17,28 @@ blp = Blueprint("Paradas", __name__, description="Operações com paradas.")
 
 @blp.route('/paradas')
 class ParadaList(MethodView):
-  @blp.response(200, ParadaSchema(many=True))
+  @blp.response(200, ParadaPaginationSchema)
   def get(self):
     linha_id = req.args.get('linha')
     sentido_id = req.args.get('sentido')
 
-    if linha_id and sentido_id:
-      paradas = ParadaModel.query.filter(ParadaModel.id_linha == linha_id, ParadaModel.id_sentido == sentido_id)
-    else:
-      paradas = ParadaModel.query.all()
+    page = req.args.get('page', 1, type=int)
+    per_page = 15
 
-    return paradas
+    paradas = ParadaModel.query
+
+    if linha_id and sentido_id:
+      paradas = paradas.filter(ParadaModel.id_linha == linha_id, ParadaModel.id_sentido == sentido_id)
+
+    paradas = paradas.paginate(page=page, per_page=per_page, error_out=False)
+
+    pagination_object = {
+      "items": paradas.items,
+      "page": paradas.page,
+      "pages": paradas.pages
+    }
+
+    return pagination_object
 
 
 @blp.route('/parada')

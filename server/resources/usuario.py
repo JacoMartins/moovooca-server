@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from db import db
 from models import UsuarioModel
-from schemas import UsuarioSchema, PlainUsuarioSchema, AuthSchema, ClienteSchema
+from schemas import UsuarioSchema, PlainUsuarioSchema, AuthSchema, ClienteSchema, UsuarioPaginationSchema
 
 from blocklist import BLOCKLIST
 
@@ -21,14 +21,24 @@ salt = bcrypt.gensalt()
 @blp.route('/usuarios')
 class Usuarios(MethodView):
   @jwt_required()
-  @blp.response(200, UsuarioSchema(many=True))
+  @blp.response(200, UsuarioPaginationSchema)
   def get(self):
     usuario_admin = get_jwt()['admin']
     
     if usuario_admin:
-      usuarios = UsuarioModel.query.all()
+      page = req.args.get('page', 1, type=int)
+      per_page = 15
 
-      return usuarios
+      usuarios = UsuarioModel.query.paginate(page=page, per_page=per_page, error_out=False)
+
+      pagination_object = {
+        "items": usuarios.items,
+        "page": usuarios.page,
+        "pages": usuarios.pages
+      }
+
+      return pagination_object
+    
     else:
       abort(401, 'Unauthorized.')
 
@@ -99,9 +109,8 @@ class Usuario(MethodView):
     return {"message": "User updated."}
   
   @jwt_required()
-  @blp.arguments(PlainUsuarioSchema)
   @blp.response(200)
-  def delete(self, id):
+  def delete(self):
     admin = get_jwt()["admin"]
     self_user = get_jwt_identity()
 
@@ -123,7 +132,7 @@ class Usuario(MethodView):
         db.session.commit()
       except SQLAlchemyError: abort(500, "An error ocurred while deleting item in table 'usuarios'.")
     
-    return {"message": "User delete."}
+    return {"message": "User deleted."}
 
 
 @blp.route('/me')
