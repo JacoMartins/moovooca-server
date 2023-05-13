@@ -18,7 +18,7 @@ import AdminUsuarios from "./sub/usuarios"
 import AdminViagens from "./sub/viagens"
 import AdminDashboard from "./sub/dashboard"
 
-export default function Admin({ me }) {
+export default function Admin({ me, item_id }) {
   const router = useRouter()
   const { sub } = router.query
   const [SPAPage, setSPAPage] = useState(sub)
@@ -110,7 +110,7 @@ export default function Admin({ me }) {
           </div>
 
           <div className="content">
-            {pages.map(page => (SPAPage === page.name && <page.Content key={page.name + "_content"} />))}
+            {pages.map(page => (SPAPage === page.name && <page.Content key={page.name + "_content"} item_id={item_id} />))}
           </div>
         </BodyContainer>
       </Main>
@@ -120,6 +120,7 @@ export default function Admin({ me }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const cookies = parseServerSideCookies(context.req.headers.cookie) as { __session: string, __session_refresh: string }
+  const { id } = context.query
 
   const config = {
     headers: {
@@ -133,6 +134,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       me,
+      item_id: id ? id : null,
     }
   }
 }

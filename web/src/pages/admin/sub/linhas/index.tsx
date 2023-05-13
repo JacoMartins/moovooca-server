@@ -12,7 +12,7 @@ import moment from "moment"
 import { clean_object } from "../../../../utils/clean_object"
 import { int } from "../../../../utils/convert"
 
-export default function AdminLinhas() {
+export default function AdminLinhas({ item_id }) {
   const router = useRouter()
 
   const [linhas, setLinhas] = useState<paginated_linhas>()
@@ -149,7 +149,9 @@ export default function AdminLinhas() {
   useEffect(() => {
     const fetch = async () => {
       setDataBusy(true)
+
       await api.get(`/linhas?page=${page}`).then(res => setLinhas(res.data))
+
       setDataBusy(false)
     }
 
