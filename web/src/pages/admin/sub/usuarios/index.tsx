@@ -1,18 +1,17 @@
 import { useRouter } from "next/router"
-import { CaretDoubleLeft, CaretDoubleRight, CaretLeft, CaretRight, CircleNotch, MagnifyingGlass, Plus, X } from "phosphor-react"
-import { useEffect, useRef, useState } from "react"
+import { CircleNotch, List, MagnifyingGlass, Plus } from "phosphor-react"
+import { useEffect, useState } from "react"
 import Table from "../../../../components/Table"
 import { api } from "../../../../services/api"
-import Modal from 'react-modal'
 import { Usuario, paginated_usuarios } from "../../../../types/api/usuario"
-import { AdminSubMain, ModalContainer } from "../../../../styles/pages/admin"
+import { AdminSubMain } from "../../../../styles/pages/admin"
 import EditableData from "../../../../components/EditableData"
 import { usuarioSchema } from "../../../../utils/tableSchemas"
-import moment from "moment"
 import { clean_object } from "../../../../utils/clean_object"
-import { int } from "../../../../utils/convert"
+import Paginator from "../../../../components/Paginator"
+import AdminModal from "../../../../components/AdminModal"
 
-export default function AdminUsuarios() {
+export default function AdminUsuarios({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
   const router = useRouter()
 
   const [busy, setBusy] = useState<boolean>(false)
@@ -31,8 +30,6 @@ export default function AdminUsuarios() {
 
   const [page, setPage] = useState<number>(1)
 
-  const pageContainerRef = useRef<HTMLDivElement>()
-
   function goTo(route: string) {
     event.preventDefault()
     router.push(route)
@@ -44,12 +41,25 @@ export default function AdminUsuarios() {
     setBusy(true)
   }
 
+  function handleOpenMenuModal(id: number) {
+    setModal(true)
+    setModalItem(id)
+
+    setModalType(3)
+  }
+
   function handleOpenEditModal(id: number) {
     setModal(true)
     setModalItem(id)
     setItemData(usuarios.items.find(item => item.id === id))
     setItemDataRequest(usuarios.items.find(item => item.id === id))
     setModalType(0)
+  }
+
+  function handleOpenErrorModal() {
+    setModal(true)
+    setModalItem(null)
+    setModalType(2)
   }
 
   function handleOpenAddModal() {
@@ -90,146 +100,54 @@ export default function AdminUsuarios() {
     setUpdate(!update)
   }
 
-  function handleChangePage(elmnt_left: number, page: number) {
-    setPage(page)
-
-    pageContainerRef.current.scrollTo({
-      left: elmnt_left - 128,
-      behavior: 'smooth'
-    })
-
-    setUpdate(!update)
-  }
-
-  function handleFirstPage() {
-    setPage(1)
-
-    pageContainerRef.current.scrollBy({
-      left: -100000,
-      behavior: 'smooth'
-    })
-
-    setUpdate(!update)
-  }
-
-  function handleLastPage() {
-    setPage(int(usuarios.pages))
-
-    pageContainerRef.current.scrollBy({
-      left: +100000,
-      behavior: 'smooth'
-    })
-
-    setUpdate(!update)
-  }
-
-  function handlePreviousPage() {
-    page > 1 && setPage(page - 1)
-
-    pageContainerRef.current.scrollBy({
-      left: -32,
-      behavior: 'smooth'
-    })
-
-    setUpdate(!update)
-  }
-
-  function handleNextPage() {
-    page < int(usuarios.pages) && setPage(page + 1)
-
-    pageContainerRef.current.scrollBy({
-      left: +32,
-      behavior: 'smooth'
-    })
-
-    setUpdate(!update)
-  }
-
   useEffect(() => {
     const fetch = async () => {
       setDataBusy(true)
-      await api.get(`/usuarios?page=${page}`).then(res => setUsuarios(res.data))
+
+      if (item_id) {
+        await api.get(`/usuario?id=${item_id}`).then(res => setUsuarios({
+          items: [res.data],
+          pages: '1',
+          page: '1'
+        })).catch(() => handleOpenErrorModal())
+      } else {
+        await api.get(`/usuarios?page=${page}`).then(res => setUsuarios(res.data))
+      }
+
       setDataBusy(false)
     }
 
     fetch()
-  }, [update])
-
-  Modal.setAppElement('.react-modal')
+  }, [update, router.asPath])
 
   return (
     <AdminSubMain>
-      <Modal
+      <AdminModal
         isOpen={modal}
         onRequestClose={handleCloseModal}
-        overlayClassName="react-modal-overlay"
-        className="react-modal-content"
-      >
-        <div className="react-modal-content-header">
-          <h2>
-            {modalType === 0 && 'Editar Item'}
-            {modalType === 1 && 'Adicionar Item'}
-          </h2>
-          <X className="react-modal-close" size={24} onClick={handleCloseModal} />
-        </div>
-
-        <div className="react-modal-container">
-          <ModalContainer>
-            <div className="itemDataContainer" style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.25rem',
-            }}>
-              {itemData &&
-                Object.entries(Object.assign(usuarioSchema.fields, itemData)).map(([key, value]) => {
-                  if (typeof value !== 'object') {
-                    return (
-                      <div key={key + value + itemData.id} style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        gap: '0.25rem'
-                      }}>
-                        {key}:
-                        <input
-                          className="editInput"
-                          type={key == 'senha' ? 'password' : typeof value === 'number' ? 'number' : moment(value.length > 3 && value).isValid() ? 'datetime-local' : typeof value === 'string' && 'text'}
-                          defaultValue={moment(value.length > 3 && value).isValid() ? value.substring(0, 16) : value}
-                          onChange={event => setItemDataRequest({ ...itemDataRequest, [key]: typeof value === 'number' ? event.target.valueAsNumber : event.target.value })}
-                          disabled={key === 'id' || key === 'criado_em' || key === 'atualizado_em'}
-                        />
-                      </div>
-                    )
-                  }
-                }
-                )}
-
-              {modalType === 0 && <button className="sendButton" onClick={() => handleEditItem(itemData.id, itemDataRequest)} disabled={buttonBusy}>
-                {buttonBusy ?
-                  <>
-                    <CircleNotch className="load" size={20} weight='regular' color="white" />
-                    Enviando...
-                  </>
-                  :
-                  'Enviar alterações'}
-              </button>}
-
-              {modalType === 1 && <button className="sendButton" onClick={() => handleAddItem(itemDataRequest)} disabled={buttonBusy}>
-                {buttonBusy ?
-                  <>
-                    <CircleNotch className="load" size={20} weight='regular' color="white" />
-                    Enviando alterações...
-                  </>
-                  :
-                  'Adicionar item'}
-              </button>}
-            </div>
-          </ModalContainer>
-        </div>
-      </Modal>
+        modalType={modalType}
+        schema={usuarioSchema}
+        handleAddItem={handleAddItem}
+        handleOpenEditModal={handleOpenEditModal}
+        handleEditItem={handleEditItem}
+        modalItem={modalItem}
+        itemData={itemData}
+        itemDataRequest={itemDataRequest}
+        setItemDataRequest={setItemDataRequest}
+        buttonBusy={buttonBusy}
+        handleSub={handleSub}
+        setUpdate={setUpdate}
+        update={update}
+      />
 
       <section className="dataSection">
-        <h2>Usuários</h2>
+        <div className="headerContainer">
+          <button onClick={handleOpenSidebar}>
+            <List size={24} weight='regular' color="rgba(0, 0, 0, 0.8)" />
+          </button>
+          <h2>Usuários</h2>
+        </div>
+
         <h3 className='lead'>Selecione, adicione, altere ou remova usuarios.</h3>
         <form onSubmit={handleSearch} className='searchContainer'>
           <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
@@ -243,7 +161,7 @@ export default function AdminUsuarios() {
           </button>
         </form>
       </section>
-      
+
       <button className="addButton" onClick={() => handleOpenAddModal()}><Plus size={24} weight='regular' color='white' /></button>
 
       <section className='lineSection'>
@@ -265,7 +183,7 @@ export default function AdminUsuarios() {
                 tableSchema={usuarioSchema}
                 update={update}
                 setUpdate={setUpdate}
-                handleOpenModal={handleOpenEditModal}
+                handleOpenMenuModal={handleOpenMenuModal}
                 handleCloseModal={handleCloseModal}
               />
             ))}
@@ -273,32 +191,14 @@ export default function AdminUsuarios() {
       </section>
 
       {
-        usuarios && <div className="paginationContainer">
-          <div className="paginationButtons">
-            <button onClick={handleFirstPage} disabled={!(page > 1)}>
-              <CaretDoubleLeft size={14} weight="regular" />
-            </button>
-            <button onClick={handlePreviousPage} disabled={!(page > 1)}>
-              <CaretLeft size={14} weight="regular" />
-            </button>
-
-            <div className="pagesContainer" ref={pageContainerRef}>
-              {[...Array(int(usuarios.pages))].map((key, value) => (
-                <button className={page === value + 1 ? 'pageSelected' : ''} key={value} onClick={(event: any) => handleChangePage(event.target.offsetLeft, value + 1)}>
-                  {value + 1}
-                </button>
-              ))}
-            </div>
-
-            <button onClick={handleNextPage} disabled={!(page < int(usuarios.pages))}>
-              <CaretRight size={14} weight="regular" />
-            </button>
-
-            <button onClick={handleLastPage} disabled={!(page < int(usuarios.pages))}>
-              <CaretDoubleRight size={14} weight="regular" />
-            </button>
-          </div>
-        </div>
+        usuarios &&
+        <Paginator
+          setPage={setPage}
+          page={page}
+          update={update}
+          setUpdate={setUpdate}
+          data={usuarios}
+        />
       }
     </AdminSubMain>
   )

@@ -1,8 +1,8 @@
 import { TableProps } from "../../types/components/table";
 import { Main } from "./styles";
 
-export default function Table({header, children}:TableProps) {
-  return(
+export default function Table({ header, children }: TableProps) {
+  return (
     <Main>
       <thead>
         <tr>
@@ -12,7 +12,7 @@ export default function Table({header, children}:TableProps) {
         </tr>
       </thead>
       <tbody>
-          {children}
+        {children}
       </tbody>
     </Main>
   )

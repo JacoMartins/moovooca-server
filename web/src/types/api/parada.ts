@@ -7,6 +7,8 @@ export interface parada {
   id_sentido: number | null;
   parada: string;
   minutos: number;
+  latitude: number;
+  longitude: number;
   criado_em: string;
   atualizado_em: string;
 

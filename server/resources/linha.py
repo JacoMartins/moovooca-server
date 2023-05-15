@@ -21,43 +21,61 @@ class LinhaList(MethodView):
   @blp.response(200, LinhaPaginationSchema)
   def get(self):
     tipo = req.args.get('tipo')
-    limite = req.args.get('limite')
 
-    page = req.args.get('page', 1, type=int)
+    page = req.args.get('page', type=int)
     per_page = 15
 
     linhas = LinhaModel.query
     
     if tipo:
       linhas = linhas.filter(LinhaModel.tipo == tipo)
-    if limite:
-      linhas = linhas.limit(int(limite))
     
-    linhas = linhas.paginate(page=page, per_page=per_page, error_out=False)
+    if page:
+      linhas = linhas.paginate(page=page, per_page=per_page, error_out=False)
 
-    pagination_object = {
-      "items": linhas.items,
-      "page": linhas.page,
-      "pages": linhas.pages
+      return {
+        "items": linhas.items,
+        "page": linhas.page,
+        "pages": linhas.pages
+      }
+
+    return {
+      "items": linhas,
+      "page": 1,
+      "pages": 1
     }
-
-    return pagination_object
 
 
 @blp.route('/linhas/search')
 class LinhaList(MethodView):
-  @blp.response(200, LinhaSchema(many=True))
+  @blp.response(200, LinhaPaginationSchema)
   def get(self):
     query = req.args.get('query')
+    page = req.args.get('page', type=int)
+    per_page = 15
+
     keywords = query.split(' ')
     linhas = LinhaModel.query
 
     if query:
       for keyword in keywords:
         filtered_keyword = keyword.replace('?', '').replace('.', '')
-        linhas = linhas.msearch(filtered_keyword, fields=['cod', 'nome', 'campus', 'tipo', 'tags'], limit=20)
+        linhas = linhas.msearch(filtered_keyword, fields=['cod', 'nome', 'campus', 'tipo', 'tags'])
 
-    return linhas.all()
+    if page:
+      linhas = linhas.paginate(page=page, per_page=per_page, error_out=False)
+
+      return {
+        "items": linhas.items,
+        "page": linhas.page,
+        "pages": linhas.pages
+      }
+
+    return {
+      "items": linhas.all(),
+      "page": 1,
+      "pages": 1
+    }
   
   @blp.response(200)
   def post(self):

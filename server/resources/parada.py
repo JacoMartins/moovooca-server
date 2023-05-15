@@ -22,7 +22,7 @@ class ParadaList(MethodView):
     linha_id = req.args.get('linha')
     sentido_id = req.args.get('sentido')
 
-    page = req.args.get('page', 1, type=int)
+    page = req.args.get('page', type=int)
     per_page = 15
 
     paradas = ParadaModel.query
@@ -30,15 +30,20 @@ class ParadaList(MethodView):
     if linha_id and sentido_id:
       paradas = paradas.filter(ParadaModel.id_linha == linha_id, ParadaModel.id_sentido == sentido_id)
 
-    paradas = paradas.paginate(page=page, per_page=per_page, error_out=False)
+    if page:
+      paradas = paradas.paginate(page=page, per_page=per_page, error_out=False)
 
-    pagination_object = {
-      "items": paradas.items,
-      "page": paradas.page,
-      "pages": paradas.pages
+      return {
+        "items": paradas.items,
+        "page": paradas.page,
+        "pages": paradas.pages
+      }
+    
+    return {
+      "items": paradas,
+      "page": 1,
+      "pages": 1
     }
-
-    return pagination_object
 
 
 @blp.route('/parada')
@@ -82,8 +87,7 @@ class Parada(MethodView):
         parada.id_linha = parada_data["id_linha"]
         parada.id_sentido = parada_data["id_sentido"]
         parada.parada = parada_data["parada"]
-        parada.minutos = parada_data["minutos"]
-        parada.atualizado_em = datetime.now().isoformat()
+        parada.atualizado_em = datetime.now()
       else:
         parada = ParadaModel(id=parada_id, **parada_data)
 

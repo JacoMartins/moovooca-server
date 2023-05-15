@@ -1,10 +1,14 @@
 import { linha } from "../api/linha";
-import { sentido } from "../api/sentido";
-import { viagem } from "../api/viagem";
+import { paginated_sentidos, sentido } from "../api/sentido";
+import { paginated_viagens, viagem } from "../api/viagem";
 
 export interface HorarioProps {
   linha: linha;
   sentido: sentido;
-  sentidos: sentido[];
-  viagens: viagem[];
+  sentidos: paginated_sentidos;
+  viagens: paginated_viagens;
+
+  lid: string;
+  sid: string;
+  page: string;
 } 

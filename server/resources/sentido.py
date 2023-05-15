@@ -20,7 +20,7 @@ class SentidoList(MethodView):
   def get(self):
     linha_id = req.args.get('linha')
 
-    page = req.args.get('page', 1, type=int)
+    page = req.args.get('page', type=int)
     per_page = 15
 
     sentidos = SentidoModel.query
@@ -28,15 +28,21 @@ class SentidoList(MethodView):
     if linha_id:
       sentidos = sentidos.filter(SentidoModel.id_linha == linha_id)
     
-    sentidos = sentidos.paginate(page=page, per_page=per_page, error_out=False)
+    if page:
+      sentidos = sentidos.paginate(page=page, per_page=per_page, error_out=False)
 
-    pagination_object = {
-      "items": sentidos.items,
-      "page": sentidos.page,
-      "pages": sentidos.pages
+      pagination_object = {
+        "items": sentidos.items,
+        "page": sentidos.page,
+        "pages": sentidos.pages
+      }
+
+      return pagination_object
+    return {
+      "items": sentidos,
+      "page": 1,
+      "pages": 1
     }
-
-    return pagination_object
 
 @blp.route('/sentido')
 class Sentido(MethodView):
@@ -83,9 +89,15 @@ class Sentido(MethodView):
         sentido.ponto_destino = sentido_data["ponto_destino"]
         sentido.horario_inicio = sentido_data["horario_inicio"]
         sentido.horario_fim = sentido_data["horario_fim"]
-        sentido.atualizado_em = datetime.now().isoformat()
+        sentido.atualizado_em = datetime.now()
       else:
         sentido = SentidoModel(id=sentido_id, **sentido_data)
+      
+      try:
+        db.session.add(sentido)
+        db.session.commit()
+      except SQLAlchemyError:
+        abort(500, "An error ocurred while updating item to table 'sentido'.")
 
       return sentido
     abort(401, "Unauthorized access.")

@@ -29,6 +29,7 @@
 ./web/.pnpm-debug.log*
 
 # local env files
+./web/.env*
 ./web/.env*.local
 
 # vercel

@@ -2,24 +2,21 @@ import Header from '../../components/Header'
 import { BodyContainer } from '../../styles/pages/reservas'
 
 import { api } from '../../services/api'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
 import { Bus, Trash } from 'phosphor-react'
-import { Footer } from '../../styles/global'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { GetServerSidePropsContext } from 'next'
-import { AuthContext } from '../../contexts/AuthContext'
 import { format_date, format_datetime } from '../../utils/format_datetime'
-import { Logo } from '../../components/Header/styles'
-import { reserva } from '../../types/api/reserva'
+import { paginated_reservas, reserva } from '../../types/api/reserva'
 import { GlobalMain } from "../../styles/global";
 import { parseServerSideCookies } from '../../utils/parseServerSideCookies'
 import { Usuario } from '../../types/api/usuario'
 
 export default function Reservas({ me }: { me: Usuario }) {
-  const [reservas, setReservas] = useState<reserva[]>()
+  const [reservas, setReservas] = useState<paginated_reservas>()
   const [reload, setReload] = useState(false)
   const router = useRouter()
 
@@ -60,10 +57,10 @@ export default function Reservas({ me }: { me: Usuario }) {
         <BodyContainer>
           <section className="myBookingsSection">
             <Table header={['Minhas Reservas']}>
-              {reservas?.length > 0 ? reservas?.map(reserva => (
+              {reservas && reservas.items.length > 0 ? reservas.items.map(reserva => (
                 <TableRow key={reserva.id} data={{
                   linha:
-                    <button className="bookingRow">
+                    <button className="bookingRow tableButton">
                       <div className='firstContainer'>
                         <span><Bus size={18} color="#2f855a" weight="bold" />{reserva.viagem.linha.cod}</span>
                         <div className="bookingInfo">

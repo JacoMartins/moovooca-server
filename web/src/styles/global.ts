@@ -370,6 +370,7 @@ export const globalStyles = globalCss({
     padding: '1rem',
     borderRadius: '0.25rem',
     zIndex: 999,
+    outline: 'none',
     animation: `${open} 0.15s ease-out`,
     
     '@media screen and (max-width: 720px)': {

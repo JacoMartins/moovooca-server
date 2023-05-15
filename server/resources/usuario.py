@@ -26,19 +26,27 @@ class Usuarios(MethodView):
     usuario_admin = get_jwt()['admin']
     
     if usuario_admin:
-      page = req.args.get('page', 1, type=int)
+      page = req.args.get('page', type=int)
       per_page = 15
 
-      usuarios = UsuarioModel.query.paginate(page=page, per_page=per_page, error_out=False)
+      usuarios = UsuarioModel.query
 
-      pagination_object = {
-        "items": usuarios.items,
-        "page": usuarios.page,
-        "pages": usuarios.pages
+      if page:
+        usuarios = usuarios.paginate(page=page, per_page=per_page, error_out=False)
+
+        pagination_object = {
+          "items": usuarios.items,
+          "page": usuarios.page,
+          "pages": usuarios.pages
+        }
+
+        return pagination_object
+
+      return {
+        "items": usuarios,
+        "page": 1,
+        "pages": 1
       }
-
-      return pagination_object
-    
     else:
       abort(401, 'Unauthorized.')
 
@@ -48,8 +56,14 @@ class Usuario(MethodView):
   @blp.response(200, UsuarioSchema)
   def get(self):
     usuario_id = get_jwt_identity()
-    
-    usuario = UsuarioModel.query.get_or_404(usuario_id)
+    usuario_admin = get_jwt()['admin']
+
+    if usuario_admin:
+      args_id = req.args.get('id', type=int)
+
+      usuario = UsuarioModel.query.get_or_404(args_id)
+    else:
+      usuario = UsuarioModel.query.get_or_404(usuario_id)
     
     return usuario
   

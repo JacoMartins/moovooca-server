@@ -1,4 +1,16 @@
+import { keyframes } from '@stitches/react';
 import { styled } from '../'
+
+export const slideRightAndFade = keyframes({
+    from: {
+        opacity: 0,
+        transform: 'translateX(calc(-2rem))',
+    },
+    to: {
+        opacity: 1,
+        transform: 'translateX(calc(-0rem))',
+    },
+});
 
 export const Main = styled('main', {
     position: 'relative',
@@ -14,42 +26,12 @@ export const Main = styled('main', {
 
 export const BodyContainer = styled('div', {
     display: 'grid',
-    maxHeight: '100vh',
+    gridTemplateColumns: '20% 1fr',
+    maxHeight: '100%',
     width: '100%',
 
-    '@media screen and (min-width: 768px)': {
-        gridTemplateColumns: '20% 1fr',
-    },
-
-    '.sidebar': {
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '$white_80',
-        // backgroundColor: '#000',
-        width: 'auto',
-        maxHeight: 'calc(100vh - 4rem)',
-        padding: '1.5rem',
-
-        '.headerContainer': {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            textAlign: 'center',
-            justifyContainer: 'center',
-
-            h4: {
-                fontWeight: 500,
-                fontSize: '1rem',
-                color: '$black_800',
-            }
-        },
-
-        '.listContainer': {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'left',
-            gap: '0.5rem',
-        }
+    '@media screen and (max-width: 768px)': {
+        gridTemplateColumns: 'none',
     },
 
     '.content': {
@@ -59,10 +41,6 @@ export const BodyContainer = styled('div', {
         padding: '2rem 2rem',
         overflow: 'auto',
         background: 'rgba(47, 133, 90, 0.08)',
-
-        table: {
-            width: '100%'
-        },
 
         '.searchContainer': {
             display: 'flex',
@@ -102,7 +80,7 @@ export const ListButton = styled('button', {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'left',
-    alignItems: 'left',
+    alignItems: 'center',
     gap: '0.5rem',
     textAlign: 'left',
     background: 'transparent',
@@ -111,6 +89,8 @@ export const ListButton = styled('button', {
     padding: '0.75rem 0.75rem',
     transition: '0.15s',
     userSelect: 'none',
+    borderRadius: '0.375rem',
+    textDecoration: 'none',
 
     '&:hover': {
         backgroundColor: 'rgba(47, 133, 90, 0.1)',
@@ -174,50 +154,50 @@ export const AdminSubMain = styled('main', {
         }
     },
 
-    '.paginationContainer': {
-        display: 'flex',
-        flexDirection: 'row',
-
-        button: {
-            height: '100%',
-            minWidth: '2rem',
-            borderRadius: 0,
-
-            '&:disabled': {
-                svg: {
-                    opacity: 0.5,
-                },
-            },
-        },
-
-        '.paginationButtons': {
+    '.dataSection': {
+        '.headerContainer': {
             display: 'flex',
             flexDirection: 'row',
-            borderRadius: '0.25rem',
-            overflow: 'hidden',
-            minHeight: '2.5rem',
-            maxHeight: '4rem',
-            maxWidth: '600px',
+            alignItems: 'center',
+            gap: '0.5rem',
 
-            '.pagesContainer': {
-                display: 'flex',
-                flexDirection: 'row',
-                overflow: 'hidden',
-                height: '100%',
+            button: {
+                display: 'none',
+                background: 'none',
+                border: 0,
+                padding: '0.25rem',
+
+                '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)'
+                },
+
+                '&:active': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                },
             },
 
-            '.pageSelected': {
-                background: '$green_600',
-                color: '$white_800'
-            },
-        },
+            '@media screen and (max-width: 768px)': {
+                padding: '0.25rem 0',
+
+                button: {
+                    display: 'flex'
+                },
+
+                h2: {
+                    lineHeight: 1,
+                    margin: 0,
+                    padding: 0
+                }
+            }
+        }
     },
 
     '.lineSection': {
         maxWidth: '100%',
+        maxHeight: '100%',
         height: '100%',
         overflow: 'auto',
-
+        
         table: {
             th: {
                 borderRight: 'solid 2px $black_150'
@@ -226,47 +206,71 @@ export const AdminSubMain = styled('main', {
     }
 })
 
-export const ModalContainer = styled('div', {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    width: '100%',
+export const Sidebar = styled('div', {
+    '.sidebar': {
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '$white',
+        // backgroundColor: '#000',
+        width: 'auto',
+        maxHeight: 'calc(100vh - 4rem)',
+        padding: '1.5rem',
+        zIndex: 2,
 
-    button: {
-        width: '100%',
-    },
-
-    '.sendButton': {
-        backgroundColor: '$green_600',
-        color: 'white',
-
-        '&:hover': {
-            filter: 'brightness(0.95)'
-        }
-    },
-
-    '.editInput': {
-        backgroundColor: 'transparent',
-        border: 0,
-        outline: 0,
-        padding: '0.25rem',
-        width: '100%',
-
-        '&:hover': {
-            backgroundColor: 'rgba(154, 230, 180, 0.5)'
+        '@media screen and (max-width: 768px)': {
+            position: 'absolute',
+            height: '100vh',
+            width: '70%',
+            animation: `${slideRightAndFade} 0.15s`
         },
 
-        '&:focus': {
-            outline: 0,
-            border: 0,
-            backgroundColor: '$green_200'
+        '.headerContainer': {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            textAlign: 'center',
+            justifyContainer: 'center',
+
+            h4: {
+                fontWeight: 500,
+                fontSize: '1rem',
+                color: '$black_800',
+            }
+        },
+
+        '.listContainer': {
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'left',
+            gap: '0.5rem',
+        },
+    },
+
+    '.sidebarBackground': {
+        display: 'none',
+        position: 'absolute',
+        height: '100vh',
+        width: '100vw',
+        zIndex: 1,
+        backgroundColor: '$black_200',
+        
+        '@media screen and (max-width: 768px)': {
+            display: 'flex'
         }
     },
 
-    '.row': {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: '0.5rem'
+    variants: {
+        open: {
+            true: {
+                '@media screen and (max-width: 768px)': {
+                    display: 'flex'
+                }
+            },
+            false: {
+                '@media screen and (max-width: 768px)': {
+                    display: 'none'
+                }
+            }
+        }
     }
 })

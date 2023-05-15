@@ -14,9 +14,11 @@ import TableRow from "../../components/TableRow";
 import { format_datetime } from "../../utils/format_datetime";
 import { format_seconds } from "../../utils/format_seconds";
 import { GlobalMain } from "../../styles/global";
+import Paginator from "../../components/Paginator";
+import { int } from "../../utils/convert";
 
-export default function Horario({ linha, sentido, sentidos, viagens }: HorarioProps) {
-  const formatted_duracao = format_seconds(viagens[0].duracao_media)
+export default function Horario({ linha, sentido, sentidos, viagens, lid, sid, page }: HorarioProps) {
+  const formatted_duracao = format_seconds(viagens.items[0].duracao_media)
   const router = useRouter()
 
   function goTo(path: string) {
@@ -49,7 +51,7 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                   <Bus weight='regular' color="#276749" />
                   {linha.cod}
                 </span>
-                {linha?.nome}
+                {linha.nome}
               </h1>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild={true} className="DropdownMenuButton">
@@ -60,7 +62,7 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                   <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
                     <DropdownMenu.Arrow className="DropdownMenuArrow" />
 
-                    {sentidos.map((sentido: sentido) => (
+                    {sentidos.items.map((sentido: sentido) => (
                       <DropdownMenu.Item className="DropdownMenuItem" key={sentido.id} onClick={() => goTo(`/horarios?lid=${linha.id}&sid=${sentido.id}`)}>
                         <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
                           <ArrowUpRight size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
@@ -89,12 +91,12 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                   <div className="stopsNearText">
                     <span>
                       <span className="bold">Parte de: </span>
-                      {viagens[0].origem};
-                      <br/>
-                      <span className="bold">Termina em: </span> 
-                      {viagens[0].destino};
-                      <br /> 
-                      <span className="bold">Passa próximo de: </span> 
+                      {viagens.items[0].origem};
+                      <br />
+                      <span className="bold">Termina em: </span>
+                      {viagens.items[0].destino};
+                      <br />
+                      <span className="bold">Passa próximo de: </span>
                       {linha.campus}.
                       <br />
                       <span className="bold">Duração média da viagem: </span>{formatted_duracao}.
@@ -104,11 +106,11 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
 
                 <div className="tripContainer">
                   <Table header={[]}>
-                    {viagens.map((viagem: viagem) => {
+                    {viagens.items.map((viagem: viagem) => {
                       return (
                         <TableRow key={viagem.id} data={{
                           viagem:
-                            <button onClick={() => goTo(`/viagem?id=${viagem.id}&lid=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                            <button className='tableButton' onClick={() => goTo(`/viagem?id=${viagem.id}&lid=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                               <div className='firstContainer'>
                                 <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
                                 {`Das ${format_datetime(viagem.horario_partida)} até às ${format_datetime(viagem.horario_chegada)}`}
@@ -120,6 +122,18 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
                         }} />
                       )
                     })}
+
+                    {viagens.items.length >= 15 &&
+                      <TableRow data={{
+                        linha:
+                          <div>
+                            <Paginator
+                              page={int(page)}
+                              setPage={(page: number) => goTo(`/horarios?lid=${lid}&sid=${sid}&page=${page}`)}
+                              data={viagens}
+                            />
+                          </div>,
+                      }} />}
                   </Table>
                 </div>
               </div>
@@ -133,19 +147,23 @@ export default function Horario({ linha, sentido, sentidos, viagens }: HorarioPr
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { lid, sid } = context.query;
+  const { lid, sid, page } = context.query;
 
   const { data: linha } = await api.get(`/linha?id=${lid}`);
   const { data: sentido } = await api.get(`/sentido?id=${sid}`);
-  const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}`);
-  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}&data=hoje`)
+  const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}&page=${page ? page : 1}`);
+  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}&data=hoje&page=${page ? page : 1}`)
 
   return {
     props: {
       linha: linha,
       sentido: sentido,
       sentidos: sentidos,
-      viagens: viagens
+      viagens: viagens,
+
+      page: page ? page : 1,
+      lid,
+      sid
     }
   }
 }

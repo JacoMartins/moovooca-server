@@ -2,7 +2,7 @@ import Header from '../../components/Header'
 import { BodyContainer, ModalContainer } from '../../styles/pages/linhas'
 import Modal from 'react-modal'
 import { api } from '../../services/api'
-import { linha } from '../../types/api/linha'
+import { linha, paginated_linhas } from '../../types/api/linha'
 import Table from '../../components/Table'
 import TableRow from '../../components/TableRow'
 import { Bus, CaretRight, CircleNotch, MagnifyingGlass, X } from 'phosphor-react'
@@ -12,6 +12,8 @@ import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { AuthContext } from '../../contexts/AuthContext'
 import { GlobalMain } from "../../styles/global";
+import Paginator from '../../components/Paginator'
+import { int } from '../../utils/convert'
 
 export default function Linhas({ head_coletivos, head_privados, page }) {
   const router = useRouter()
@@ -22,8 +24,8 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
   const [modalType, setModalType] = useState<number>(0)
   const [modal, setModal] = useState(false)
 
-  const [coletivos, setColetivos] = useState<linha[]>()
-  const [privados, setPrivados] = useState<linha[]>()
+  const [coletivos, setColetivos] = useState<paginated_linhas>()
+  const [privados, setPrivados] = useState<paginated_linhas>()
 
   function goTo(path: string) {
     event.preventDefault()
@@ -47,15 +49,17 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
 
   useEffect(() => {
     if (modalType === 0) {
-      const fetch = async () => await api.get('/linhas?tipo=COLETIVO').then(res => setColetivos(res.data))
+      const fetch = async () => await api.get(`/linhas?tipo=COLETIVO&page=${page}`).then(res => setColetivos(res.data))
       fetch()
     }
 
     if (modalType === 1) {
-      const fetch = async () => await api.get('/linhas?tipo=PRIVADO').then(res => setPrivados(res.data))
+      const fetch = async () => await api.get(`/linhas?tipo=PRIVADO&page=${page}`).then(res => setPrivados(res.data))
       fetch()
     }
-  }, [modalType])
+  }, [modalType, page])
+
+  console.log(head_coletivos)
 
   Modal.setAppElement('.react-modal')
 
@@ -85,7 +89,28 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
             <ModalContainer>
               {modalType == 0 &&
                 <Table header={['Todos']}>
-                  {coletivos?.map((linha: linha) => {
+                  {coletivos && coletivos.items.map((linha: linha) => {
+                    return (
+                      <TableRow key={linha.id} data={{
+                        linha:
+                          <button className='tableButton' onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                            <div className='firstContainer'>
+                              <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
+                              {linha.nome} - {linha.tipo}
+                            </div>
+                            <div className='lastContainer'>
+                              <span>Passa próximo de</span>
+                              <a>{linha.campus}</a>
+                            </div>
+                          </button>,
+                      }} />
+                    )
+                  })}
+                </Table>}
+
+              {modalType == 1 &&
+                <Table header={['Todos']}>
+                  {privados && privados.items.map((linha: linha) => {
                     return (
                       <TableRow key={linha.id} data={{
                         linha:
@@ -103,27 +128,6 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                     )
                   })}
                 </Table>}
-
-              {modalType == 1 &&
-                <Table header={['Todos']}>
-                {privados?.map((linha: linha) => {
-                  return (
-                    <TableRow key={linha.id} data={{
-                      linha:
-                        <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
-                          <div className='firstContainer'>
-                            <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
-                            {linha.nome} - {linha.tipo}
-                          </div>
-                          <div className='lastContainer'>
-                            <span>Passa próximo de</span>
-                            <a>{linha.campus}</a>
-                          </div>
-                        </button>,
-                    }} />
-                  )
-                })}
-              </Table>}
             </ModalContainer>
           </div>
         </Modal>
@@ -148,13 +152,13 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
           </section>
 
           <section className='lineSection'>
-            {head_coletivos.length > 0 &&
+            {head_coletivos.items.length > 0 &&
               <Table header={['Transporte Público: Coletivos']}>
-                {head_coletivos.map((linha: linha) => {
+                {head_coletivos.items.map((linha: linha) => {
                   return (
                     <TableRow key={linha.id} data={{
                       linha:
-                        <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                        <button className='tableButton' onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                           <div className='firstContainer'>
                             <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
                             {linha.nome} - {linha.tipo}
@@ -170,23 +174,22 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
                 <TableRow data={{
                   linha:
                     <div>
-                      <button onClick={() => openModal(0)}>
-                        <div className='firstContainer'>
-                          Ver mais
-                          <CaretRight size={18} weight='regular' />
-                        </div>
-                      </button>
+                      <Paginator 
+                        page={int(page)} 
+                        setPage={(page:number) => goTo(`/linhas?page=${page}`)}
+                        data={head_coletivos}
+                      />
                     </div>,
                 }} />
               </Table>
             }
 
-            {head_privados.length > 0 && <Table header={['Transporte Privado']}>
-              {head_privados.map((linha: linha) => {
+            {head_privados.items.length > 0 && <Table header={['Transporte Privado']}>
+              {head_privados.items.map((linha: linha) => {
                 return (
                   <TableRow key={linha.id} data={{
                     linha:
-                      <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                      <button className='tableButton' onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                         <div className='firstContainer'>
                           <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
                           {linha.nome} - {linha.tipo}
@@ -219,11 +222,15 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { data: head_coletivos } = await api.get(`/linhas?tipo=COLETIVO&limite=5`);
-  const { data: head_privados } = await api.get(`/linhas?tipo=PRIVADO&limite=5`);
+  const { page } = context.query
+  const page_ = page ? page : 1
+
+  const { data: head_coletivos } = await api.get(`/linhas?tipo=COLETIVO&page=${page_}`);
+  const { data: head_privados } = await api.get(`/linhas?tipo=PRIVADO&page=${page_}`);
 
   return {
     props: {
+      page: page_,
       head_coletivos,
       head_privados
     }

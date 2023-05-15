@@ -1,6 +1,7 @@
 import { linha_co } from "../types/api/linha"
 import { parada_co } from "../types/api/parada"
 import { reserva_co } from "../types/api/reserva"
+import { sentido_co } from "../types/api/sentido"
 import { usuario_co } from "../types/api/usuario"
 import { viagem_co } from "../types/api/viagem"
 
@@ -15,8 +16,23 @@ export const linhaSchema:linha_co = {
     valor_meia: 0,
     tipo: '',
     capacidade_assento: 0,
-    criado_em: new Date().toLocaleDateString(),
-    atualizado_em: new Date().toLocaleDateString()
+    criado_em: new Date().toUTCString(),
+    atualizado_em: ''
+  }
+}
+
+export const sentidoSchema:sentido_co = {
+  name: 'sentido',
+  fields: {
+    id: null,
+    id_linha: null,
+    sentido: '',
+    ponto_partida: '',
+    ponto_destino: '',
+    horario_inicio: '',
+    horario_fim: '',
+    criado_em: new Date().toUTCString(),
+    atualizado_em: ''
   }
 }
 
@@ -28,6 +44,8 @@ export const paradaSchema:parada_co = {
     id_sentido: 0,
     parada: '',
     minutos: 0,
+    latitude: 0,
+    longitude: 0,
     criado_em: '',
     atualizado_em: '',
   }
@@ -58,7 +76,7 @@ export const usuarioSchema:usuario_co = {
     motorista: 0,
     admin: 0,
     criado_em: new Date().toUTCString(),
-    atualizado_em: new Date().toUTCString(),
+    atualizado_em: '',
   }
 }
 
@@ -79,7 +97,7 @@ export const viagemSchema:viagem_co = {
     pago_meia: 0,
     gratuidade: 0,
     assentos_disponiveis: 0,
-    criado_em: '',
+    criado_em: new Date().toUTCString(),
     atualizado_em: '',
   }
 }

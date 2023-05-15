@@ -1,44 +1,38 @@
 import { useRouter } from "next/router"
-import { CircleNotch, List, MagnifyingGlass, Plus } from "phosphor-react"
+import { CircleNotch, List, MagnifyingGlass, Plus, X } from "phosphor-react"
 import { useEffect, useState } from "react"
 import Table from "../../../../components/Table"
 import { api } from "../../../../services/api"
-import { paginated_reservas, reserva } from "../../../../types/api/reserva"
-import { AdminSubMain } from "../../../../styles/pages/admin"
 import EditableData from "../../../../components/EditableData"
-import { reservaSchema } from "../../../../utils/tableSchemas"
+import { AdminSubMain } from "../../../../styles/pages/admin"
+import { sentidoSchema } from "../../../../utils/tableSchemas"
 import { clean_object } from "../../../../utils/clean_object"
 import Paginator from "../../../../components/Paginator"
 import AdminModal from "../../../../components/AdminModal"
+import { sentido, paginated_sentidos } from "../../../../types/api/sentido"
 
-export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
+export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
   const router = useRouter()
 
-  const [busy, setBusy] = useState<boolean>(false)
+  const [sentidos, setSentidos] = useState<paginated_sentidos>()
   const [dataBusy, setDataBusy] = useState<boolean>(false)
-  const [searchInput, setSearchInput] = useState<string>('')
-  const [reservas, setReservas] = useState<paginated_reservas>()
   const [update, setUpdate] = useState<boolean>(false)
+  const [busy, setBusy] = useState<boolean>(false)
+  const [searchInput, setSearchInput] = useState<string>('')
 
   const [modal, setModal] = useState<boolean>(false)
   const [modalItem, setModalItem] = useState<number>()
   const [modalType, setModalType] = useState<number>(0)
   const [buttonBusy, setButtonBusy] = useState<boolean>(false)
 
-  const [itemData, setItemData] = useState<reserva>()
-  const [itemDataRequest, setItemDataRequest] = useState<reserva>()
+  const [itemData, setItemData] = useState<sentido>()
+  const [itemDataRequest, setItemDataRequest] = useState<sentido>()
 
   const [page, setPage] = useState<number>(1)
 
   function goTo(route: string) {
     event.preventDefault()
     router.push(route)
-  }
-
-  function handleSearch() {
-    event.preventDefault()
-    goTo(`/search?query=${searchInput}`)
-    setBusy(true)
   }
 
   function handleOpenMenuModal(id: number) {
@@ -48,11 +42,22 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
     setModalType(3)
   }
 
+  function handleOpenAddModal() {
+    const obj = clean_object(sentidoSchema.fields) as sentido;
+
+    setModal(true)
+    setModalItem(null)
+    setItemData(obj)
+    setItemDataRequest(obj)
+
+    setModalType(1)
+  }
+
   function handleOpenEditModal(id: number) {
     setModal(true)
     setModalItem(id)
-    setItemData(reservas.items.find(item => item.id === id))
-    setItemDataRequest(reservas.items.find(item => item.id === id))
+    setItemData(sentidos.items.find(item => item.id === id))
+    setItemDataRequest(sentidos.items.find(item => item.id === id))
     setModalType(0)
   }
 
@@ -62,38 +67,34 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
     setModalType(2)
   }
 
-  function handleOpenAddModal() {
-    const obj = clean_object(reservaSchema.fields) as reserva;
-
-    setModal(true)
-    setModalItem(null)
-    setItemData(obj)
-    setItemDataRequest(obj)
-    setModalType(1)
-  }
-
   function handleCloseModal() {
     setModal(false)
   }
 
-  async function handleAddItem(data: reserva) {
-    const { id: _id, criado_em, atualizado_em, usuario, viagem, ...filteredData } = data
+  function handleSearch() {
+    event.preventDefault()
+    goTo(`/search?query=${searchInput}`)
+    setBusy(true)
+  }
+
+  async function handleAddItem(data: sentido) {
+    const { id: _id, criado_em, atualizado_em, linha, paradas, ...filteredData } = data
 
     setButtonBusy(true)
 
-    await api.post(`/reserva`, filteredData)
+    await api.post(`/sentido`, filteredData)
 
     setButtonBusy(false)
     handleCloseModal()
     setUpdate(!update)
   }
 
-  async function handleEditItem(id: number, data: reserva) {
-    const { id: _id, criado_em, atualizado_em, usuario, viagem, ...filteredData } = data
+  async function handleEditItem(id: number, data: sentido) {
+    const { id: _id, criado_em, atualizado_em, linha, paradas, ...filteredData } = data
 
     setButtonBusy(true)
 
-    await api.put(`/reserva?id=${id}`, filteredData)
+    await api.put(`/sentido?id=${id}`, filteredData)
 
     setButtonBusy(false)
     handleCloseModal()
@@ -105,13 +106,13 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
       setDataBusy(true)
 
       if (item_id) {
-        await api.get(`/reserva?id=${item_id}`).then(res => setReservas({
+        await api.get(`/sentido?id=${item_id}`).then(res => setSentidos({
           items: [res.data],
           pages: '1',
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/reservas?page=${page}`).then(res => setReservas(res.data))
+        await api.get(`/sentidos?page=${page}`).then(res => setSentidos(res.data))
       }
 
       setDataBusy(false)
@@ -126,7 +127,7 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
         isOpen={modal}
         onRequestClose={handleCloseModal}
         modalType={modalType}
-        schema={reservaSchema}
+        schema={sentidoSchema}
         handleAddItem={handleAddItem}
         handleOpenEditModal={handleOpenEditModal}
         handleEditItem={handleEditItem}
@@ -140,15 +141,15 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
         update={update}
       />
 
-      <section className="dataSection">
+      <section className='dataSection'>
         <div className="headerContainer">
           <button onClick={handleOpenSidebar}>
             <List size={24} weight='regular' color="rgba(0, 0, 0, 0.8)" />
           </button>
-          <h2>Reservas</h2>
+          <h2>Sentidos</h2>
         </div>
 
-        <h3 className='lead'>Selecione, adicione, altere ou remova reservas.</h3>
+        <h3 className='lead'>Selecione, adicione, altere ou remova sentidos.</h3>
         <form onSubmit={handleSearch} className='searchContainer'>
           <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
           <button type='submit'>
@@ -165,7 +166,7 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
       <button className="addButton" onClick={() => handleOpenAddModal()}><Plus size={24} weight='regular' color='white' /></button>
 
       <section className='lineSection'>
-        <Table header={Object.keys(reservaSchema.fields).filter(item => item !== 'usuario' && item !== 'viagem')}>
+        <Table header={Object.keys(sentidoSchema.fields).filter(item => item !== 'paradas')}>
           {dataBusy ?
             <tr>
               <td style={{
@@ -178,11 +179,11 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
               </td>
             </tr>
             :
-            reservas && reservas.items.map(reserva => (
+            sentidos && sentidos.items.map(sentido => (
               <EditableData
-                key={reserva.id}
-                data={reserva}
-                tableSchema={reservaSchema}
+                key={sentido.id}
+                data={sentido}
+                tableSchema={sentidoSchema}
                 update={update}
                 setUpdate={setUpdate}
                 handleOpenMenuModal={handleOpenMenuModal}
@@ -193,13 +194,13 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
       </section>
 
       {
-        reservas &&
+        sentidos &&
         <Paginator
           setPage={setPage}
           page={page}
           update={update}
           setUpdate={setUpdate}
-          data={reservas}
+          data={sentidos}
         />
       }
     </AdminSubMain>

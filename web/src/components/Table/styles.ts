@@ -8,7 +8,8 @@ export const Main = styled('table', {
   borderSpacing: 0,
   textAlign: 'left',
   borderRadius,
-  
+  width: '100%',
+
   thead: {
     borderTopLeftRadius: borderRadius,
     borderTopRightRadius: borderRadius,
@@ -24,7 +25,7 @@ export const Main = styled('table', {
       'th:last-child': {
         borderTopRightRadius: borderRadius,
       },
-      
+
       th: {
         padding: padding,
         borderBottom: 'solid 1px $black_100',

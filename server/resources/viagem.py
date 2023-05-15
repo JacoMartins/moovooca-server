@@ -22,7 +22,7 @@ class ViagemList(MethodView):
     sentido_id = req.args.get('sentido')
     data_arg = req.args.get('data')
     
-    page = req.args.get('page', 1, type=int)
+    page = req.args.get('page', type=int)
     per_page = 15
     
     viagens = ViagemModel.query
@@ -35,15 +35,21 @@ class ViagemList(MethodView):
     if linha_id and sentido_id:
       viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data)
 
-    viagens = ViagemModel.query.paginate(page=page, per_page=per_page, error_out=False)
+    if page:
+      viagens = ViagemModel.query.paginate(page=page, per_page=per_page, error_out=False)
 
-    pagination_object = {
-      "items": viagens.items,
-      "page": viagens.page,
-      "pages": viagens.pages
+      pagination_object = {
+        "items": viagens.items,
+        "page": viagens.page,
+        "pages": viagens.pages
+      }
+      
+      return pagination_object
+    return {
+      "items": viagens,
+      "page": 1,
+      "pages": 1
     }
-    
-    return pagination_object
   
   def post(self, lid, sid, data_):
     linha_id = req.args.get('linha') if not lid else lid

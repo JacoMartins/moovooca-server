@@ -223,7 +223,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
-      paradas,
+      paradas: paradas.items,
       viagem
     }
   }

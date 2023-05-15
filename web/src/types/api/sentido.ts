@@ -1,3 +1,6 @@
+import { linha } from "./linha";
+import { parada } from "./parada";
+
 export interface sentido {
   id: number | null;
   id_linha: number | null;
@@ -8,6 +11,9 @@ export interface sentido {
   horario_fim: string;
   criado_em: string;
   atualizado_em: string;
+
+  linha?: linha;
+  paradas?: parada[];
 }
 
 export interface paginated_sentidos {

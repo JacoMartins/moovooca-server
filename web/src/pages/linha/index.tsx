@@ -136,7 +136,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       linha: linha,
       sentido: sentido,
-      sentidos: sentidos,
+      sentidos: sentidos.items,
       paradas: sentido.paradas
     }
   }

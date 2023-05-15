@@ -38,7 +38,7 @@ export const Main = styled('tr', {
         alignItems: 'center',
         gap: '0.5rem',
 
-        button: {
+        '.tableButton': {
           width: 'fit-content',
           fontSize: '0.875rem',
 
@@ -54,7 +54,7 @@ export const Main = styled('tr', {
       }
     },
 
-    button: {
+    '.tableButton': {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -69,6 +69,7 @@ export const Main = styled('tr', {
         flexDirection: 'column',
         justifyContent: 'left',
         alignItems: 'flex-start',
+        width: '100%',
       },
 
       '.firstContainer': {

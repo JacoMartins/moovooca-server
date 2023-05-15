@@ -11,8 +11,10 @@ import { GetServerSidePropsContext } from 'next'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { GlobalMain } from "../../styles/global";
+import Paginator from '../../components/Paginator'
+import { int } from '../../utils/convert'
 
-export default function Search({ linhas, query, texto_gerado }) {
+export default function Search({ linhas, query, texto_gerado, page }) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
   const [searchInput, setSearchInput] = useState<string>('')
@@ -70,11 +72,11 @@ export default function Search({ linhas, query, texto_gerado }) {
 
           <section className='lineSection'>
             <Table header={[]}>
-              {linhas.map((linha: linha) => {
+              {linhas.items.map((linha: linha) => {
                 return (
                   <TableRow key={linha.id} data={{
                     linha:
-                      <button onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
+                      <button className='tableButton' onClick={() => goTo(`/linha?id=${linha.id}&sid=${linha.sentidos[0].id}`)}>
                         <div className='firstContainer'>
                           <span><Bus size={18} color="#2f855a" weight="bold" />{linha.cod}</span>
                           {linha.nome} - {linha.tipo}
@@ -87,6 +89,19 @@ export default function Search({ linhas, query, texto_gerado }) {
                   }} />
                 )
               })}
+              {
+                linhas.pages > 1 &&
+                <TableRow data={{
+                  linha:
+                    <div>
+                      <Paginator
+                        page={int(page)}
+                        setPage={(page: number) => goTo(`/search?query=${query}&page=${page}`)}
+                        data={linhas}
+                      />
+                    </div>,
+                }} />
+              }
             </Table>
           </section>
         </BodyContainer>
@@ -96,15 +111,17 @@ export default function Search({ linhas, query, texto_gerado }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const page = context.query.page ? context.query.page : 1
   const query = context.query.query || '';
 
-  const { data: linhas } = await api.get(`/linhas/search?query=${query}`);
+  const { data: linhas } = await api.get(`/linhas/search?query=${query}&page=${page}`);
   // const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
 
   return {
     props: {
       linhas,
       query,
+      page,
       texto_gerado: ''
     }
   }

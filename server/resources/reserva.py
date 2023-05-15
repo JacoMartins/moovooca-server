@@ -23,7 +23,7 @@ class ReservaList(MethodView):
     usuario_id = get_jwt_identity()
     usuario_admin = get_jwt()['admin']
 
-    page = req.args.get('page', 1, type=int)
+    page = req.args.get('page', type=int)
     per_page = 15
 
     reservas = ReservaModel.query
@@ -31,16 +31,22 @@ class ReservaList(MethodView):
     if not usuario_admin:
       reservas = reservas.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
 
-    reservas = reservas.paginate(page=page, per_page=per_page, error_out=False)
+    if page:
+      reservas = reservas.paginate(page=page, per_page=per_page, error_out=False)
 
-    pagination_object = {
-      "items": reservas.items,
-      "page": reservas.page,
-      "pages": reservas.pages
+      pagination_object = {
+        "items": reservas.items,
+        "page": reservas.page,
+        "pages": reservas.pages
+      }
+
+      return pagination_object
+    
+    return {
+      "items": reservas,
+      "page": 1,
+      "pages": 1
     }
-
-    return pagination_object
-  
 
 @blp.route('/reserva')
 class Reserva(MethodView):
