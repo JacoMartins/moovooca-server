@@ -2,7 +2,7 @@
 
 # Moovooca-Next
 
-Este é um aplicativo Next.js chamado Moovooca-Next que utiliza várias dependências para sua funcionalidade. O objetivo deste readme é orientá-lo através dos passos para iniciar a aplicação.
+Este é um aplicativo Next.js chamado moovooca que utiliza várias dependências para sua funcionalidade. O objetivo deste readme é orientá-lo através dos passos para iniciar a aplicação.
 
 ## Requisitos
 
@@ -12,11 +12,11 @@ Antes de começar, certifique-se de que você tem o Node.js instalado em seu sis
 
 Clone o repositório ou baixe o código fonte em um arquivo zip.
 
-```git clone https://github.com/seu-usuario/moovooca-next.git```
+```git clone https://github.com/JacoMartins/pet-computacao.git```
 
 Navegue até o diretório do projeto.
 
-```cd moovooca-next```
+```cd pet-computacao```
 
 Instale as dependências.
 
