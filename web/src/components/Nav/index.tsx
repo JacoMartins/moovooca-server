@@ -4,7 +4,7 @@ import { House, LineSegments, ListBullets, MagnifyingGlass, SignOut, Wrench } fr
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import { NavProps } from "../../types/components/nav";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import ProfileButton from "../ProfileButton";
 import { LabelText } from "../Header/styles";
 import { AuthContext, logout, reload } from "../../contexts/AuthContext";
@@ -13,8 +13,6 @@ export default function Nav({ isNavOpen }: NavProps) {
   const router = useRouter();
   const page = router.pathname.split("/")[1];
   const { autenticado, usuario } = useContext(AuthContext);
-
-  const profileImage = 'https://st2.depositphotos.com/5682790/10456/v/600/depositphotos_104564156-stock-illustration-male-user-icon.jpg';
 
   function goTo(route: string) {
     router.push(route);
@@ -48,7 +46,7 @@ export default function Nav({ isNavOpen }: NavProps) {
         {autenticado ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild={false} className="DropdownMenuButton">
-              <ProfileButton main_name={'noname'} picture_profile={profileImage} />
+              <ProfileButton mainName={'noname'} />
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Portal>

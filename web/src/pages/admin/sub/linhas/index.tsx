@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import { CircleNotch, List, MagnifyingGlass, Plus, X } from "phosphor-react"
+import { CircleNotch, Export, Funnel, List, MagnifyingGlass, Plus, X } from "phosphor-react"
 import { useEffect, useState } from "react"
 import Table from "../../../../components/Table"
 import { api } from "../../../../services/api"
@@ -10,8 +10,10 @@ import { linhaSchema } from "../../../../utils/tableSchemas"
 import { clean_object } from "../../../../utils/clean_object"
 import Paginator from "../../../../components/Paginator"
 import AdminModal from "../../../../components/AdminModal"
+import { AdminSubProps } from "../../../../types/pages/AdminSub"
+import { CSVLink } from 'react-csv'
 
-export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
+export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }: AdminSubProps) {
   const router = useRouter()
 
   const [linhas, setLinhas] = useState<paginated_linhas>()
@@ -67,14 +69,14 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
     setModalType(2)
   }
 
-  function handleCloseModal() {
-    setModal(false)
+  function handleOpenFilterModal() {
+    setModal(true)
+    setModalItem(null)
+    setModalType(4)
   }
 
-  function handleSearch() {
-    event.preventDefault()
-    goTo(`/search?query=${searchInput}`)
-    setBusy(true)
+  function handleCloseModal() {
+    setModal(false)
   }
 
   async function handleAddItem(data: linha) {
@@ -119,7 +121,7 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
     }
 
     fetch()
-  }, [update, router.asPath])
+  }, [update, item_id, page])
 
   return (
     <AdminSubMain>
@@ -150,24 +152,26 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
         </div>
 
         <h3 className='lead'>Selecione, adicione, altere ou remova linhas.</h3>
-        
-        <form onSubmit={handleSearch} className='searchContainer'>
-          <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
-          <button type='submit'>
-            {
-              busy ?
-                <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
-                :
-                <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
-            }
+        <div className="actionsContainer">
+          {linhas &&
+            <CSVLink data={linhas.items.map(item => Object.assign({ ...linhaSchema.fields }, item))} filename={`linhas${new Date().toISOString()}.csv`}>
+              <button>
+                <Export size={18} weight='regular' color='#276749' />
+                Exportar para CSV
+              </button>
+            </CSVLink>}
+
+          <button onClick={handleOpenFilterModal}>
+            <Funnel size={18} weight='regular' color='#276749' />
+            Filtrar
           </button>
-        </form>
+        </div>
       </section>
 
       <button className="addButton" onClick={() => handleOpenAddModal()}><Plus size={24} weight='regular' color='white' /></button>
 
       <section className='lineSection'>
-        <Table header={Object.keys(linhaSchema.fields).filter(item => item !== 'sentidos')}>
+        <Table header={Object.keys(linhaSchema.fields)}>
           {dataBusy ?
             <tr>
               <td style={{

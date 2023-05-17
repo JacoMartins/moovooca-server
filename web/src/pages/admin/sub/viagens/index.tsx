@@ -10,8 +10,9 @@ import { viagemSchema } from "../../../../utils/tableSchemas"
 import { clean_object } from "../../../../utils/clean_object"
 import Paginator from "../../../../components/Paginator"
 import AdminModal from "../../../../components/AdminModal"
+import { AdminSubProps } from "../../../../types/pages/AdminSub"
 
-export default function AdminViagens({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
+export default function AdminViagens({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }:AdminSubProps) {
   const router = useRouter()
 
   const [busy, setBusy] = useState<boolean>(false)
@@ -118,7 +119,7 @@ export default function AdminViagens({ item_id, handleSub, handleOpenSidebar, ha
     }
 
     fetch()
-  }, [update, router.asPath])
+  }, [update, item_id, page])
 
   return (
     <AdminSubMain>

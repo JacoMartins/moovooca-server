@@ -10,8 +10,9 @@ import { clean_object } from "../../../../utils/clean_object"
 import Paginator from "../../../../components/Paginator"
 import AdminModal from "../../../../components/AdminModal"
 import { sentido, paginated_sentidos } from "../../../../types/api/sentido"
+import { AdminSubProps } from "../../../../types/pages/AdminSub"
 
-export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }) {
+export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }:AdminSubProps) {
   const router = useRouter()
 
   const [sentidos, setSentidos] = useState<paginated_sentidos>()
@@ -119,7 +120,7 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
     }
 
     fetch()
-  }, [update, router.asPath])
+  }, [update, item_id, page])
 
   return (
     <AdminSubMain>

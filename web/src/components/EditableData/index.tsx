@@ -1,21 +1,6 @@
-import { Pencil, Trash } from "phosphor-react";
 import { Tr } from "./styles";
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useRouter } from "next/router";
-import { api } from "../../services/api";
-
-
-interface EditableDataProps {
-  data: { id: number };
-  tableSchema: {
-    name: string;
-    fields: object;
-  };
-  update: boolean;
-  setUpdate?: (data: boolean) => void;
-  handleOpenMenuModal: (id: number) => void;
-  handleCloseModal: () => void;
-}
+import { EditableDataProps } from "../../types/components/EditableData";
 
 export default function EditableData({ data, tableSchema, handleOpenMenuModal }: EditableDataProps) {
   const router = useRouter()

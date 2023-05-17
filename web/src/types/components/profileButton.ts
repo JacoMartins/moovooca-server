@@ -1,5 +1,5 @@
 export interface ProfileButtonProps {
-  main_name: string;
-  picture_profile: string;
+  mainName: string;
+  profilePicture?: string;
   onClick?: () => void;
 }

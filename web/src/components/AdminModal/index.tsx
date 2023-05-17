@@ -1,11 +1,24 @@
 import { ArrowSquareOut, CircleNotch, PencilSimple, Trash, X } from "phosphor-react"
+import { useState } from "react"
 import { ChangeEvent, HTMLInputTypeAttribute } from "react"
 import Modal from 'react-modal'
 import { api } from "../../services/api"
+import { clean_object } from "../../utils/clean_object"
 import { ModalContainer } from "./styles"
 
 export default function AdminModal({ isOpen, onRequestClose, modalType, modalItem, schema, handleAddItem, handleOpenEditModal, handleEditItem, itemData, itemDataRequest, setItemDataRequest, buttonBusy, handleSub, setUpdate, update }) {
   Modal.setAppElement('.react-modal')
+  const [filterObj, setFilterObj] = useState<any>({})
+
+  function handleToggleField(field: string) {
+    if (Object.keys(filterObj).find(item => item === field)) {
+      const { [field]:property, ...rest } = filterObj
+      setFilterObj(rest)
+    } else {
+      const [property, value] = Object.entries(clean_object(schema.fields)).find(([key, value]) => key === field)
+      setFilterObj({ ...filterObj, [property]: value })
+    }
+  }
 
   async function handleDeleteItem(id: number) {
     await api.delete(`/${schema.name}?id=${id}`)
@@ -57,6 +70,7 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
           {modalType === 1 && 'Adicionar Item'}
           {modalType === 2 && 'Erro'}
           {modalType === 3 && `Item ${modalItem}`}
+          {modalType === 4 && `Filtrar items`}
         </h2>
         <X className="react-modal-close" size={24} onClick={onRequestClose} />
       </div>
@@ -134,11 +148,69 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
             }
 
             {
-              modalType === 3 && 
+              modalType === 3 &&
               <div className="menuList">
                 <button onClick={() => handleOpenEditModal(modalItem)}><PencilSimple size={16} weight='regular' color='rgba(0, 0, 0, 0.8)' /> Editar Item</button>
                 <button onClick={() => handleDeleteItem(modalItem)}><Trash size={16} weight='regular' color='rgba(0, 0, 0, 0.8)' /> Remover Item</button>
               </div>
+            }
+
+            {
+              modalType === 4 &&
+              <>
+                <span>Campos</span>
+                <div className="fieldsContainer">
+                  {Object.entries(clean_object({ ...schema.fields })).map(([key, value]) => {
+                    const key_id = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+
+                    return (
+                      <div key={key_id} className="checkboxContainer">
+                        <input
+                          type='checkbox'
+                          id={key + key_id}
+                          name={key + key_id}
+                          onChange={() => handleToggleField(key)}
+                          checked={Object.keys(filterObj).find(item => item === key) && true}
+                        />
+                        <label htmlFor={key + key_id}>{key}</label>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            }
+
+            {
+              (modalType === 4 && filterObj) &&
+              Object.entries(filterObj).map(([key, value]) => {
+                const type = setInputType(key, value)
+                const defaultValue = padronizeValue(key, value)
+
+                return (
+                  <div key={key} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    gap: '0.25rem'
+                  }}>
+                    <div className="field">
+                      {key}
+                    </div>
+                    <select className="operator">
+                      <option>=</option>
+                      <option>{'<'}</option>
+                      <option>{'>'}</option>
+                      <option>NOT</option>
+                    </select>
+                    <input
+                      className="editInput"
+                      type={type}
+                      defaultValue={defaultValue}
+                      onChange={event => handleChangeInput(key, value, event)}
+                    />
+                  </div>
+                )
+              })
             }
           </div>
         </ModalContainer>

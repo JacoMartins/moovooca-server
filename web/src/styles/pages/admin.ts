@@ -155,6 +155,30 @@ export const AdminSubMain = styled('main', {
     },
 
     '.dataSection': {
+        '.actionsContainer': {
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '0.5rem',
+            padding: '0.25rem 0',
+
+            button: {
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '0.25rem',
+                background: 'none',
+                border: 0,
+                padding: '0.25rem',
+
+                '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)'
+                },
+
+                '&:active': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                },
+            }
+        },
+
         '.headerContainer': {
             display: 'flex',
             flexDirection: 'row',
@@ -197,7 +221,7 @@ export const AdminSubMain = styled('main', {
         maxHeight: '100%',
         height: '100%',
         overflow: 'auto',
-        
+
         table: {
             th: {
                 borderRight: 'solid 2px $black_150'
@@ -224,12 +248,44 @@ export const Sidebar = styled('div', {
             animation: `${slideRightAndFade} 0.15s`
         },
 
+        '.userContainer': {
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '0.5rem',
+            alignItems: 'center',
+            padding: '0.25rem 0.5rem',
+            width: '100%',
+
+            '.userInfoContainer': {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'left',
+                textAlign: 'left',
+                gap: 0,
+
+                'span:first-child': {
+                    fontWeight: 500,
+                    color: 'rgba(0, 0, 0, 0.8)'
+                },
+
+                span: {
+                    lineHeight: 'normal',
+                    color: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        },
+
         '.headerContainer': {
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
             textAlign: 'center',
-            justifyContainer: 'center',
+            justifyContent: 'center',
+
+            h2: {
+                padding: '0 0.5rem',
+                justifyContent: 'left'
+            },
 
             h4: {
                 fontWeight: 500,
@@ -253,7 +309,7 @@ export const Sidebar = styled('div', {
         width: '100vw',
         zIndex: 1,
         backgroundColor: '$black_200',
-        
+
         '@media screen and (max-width: 768px)': {
             display: 'flex'
         }

@@ -1,7 +1,8 @@
 import { List } from "phosphor-react";
 import { AdminSubMain } from "../../../../styles/pages/admin";
+import { AdminSubProps } from "../../../../types/pages/AdminSub";
 
-export default function AdminDashboard({handleOpenSidebar}) {
+export default function AdminDashboard({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }:AdminSubProps) {
   return (
     <AdminSubMain>
       <section className='dataSection'>
@@ -13,7 +14,7 @@ export default function AdminDashboard({handleOpenSidebar}) {
         </div>
         <br />
         <h3 className='lead'>Seja bem-vindo ao dashboard admin.</h3>
-        <p>Clique no botão lista para navegar em outras abas.</p>
+        <p>Em desenvolvimento</p>
       </section>
     </AdminSubMain>
   )

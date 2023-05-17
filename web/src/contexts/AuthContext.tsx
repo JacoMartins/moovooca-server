@@ -3,23 +3,7 @@ import { api } from "../services/api";
 import { Usuario } from "../types/api/usuario";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import Router from "next/router";
-
-interface AuthCredenciais {
-  identificador: string;
-  senha: string;
-};
-
-interface AuthContextData {
-  auth(credenciais: AuthCredenciais): Promise<void>;
-  autenticado: boolean;
-  usuario: Usuario;
-  busy: boolean;
-  reload: () => void;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
+import { AuthContextData, AuthCredenciais, AuthProviderProps } from "../types/contexts/AuthContext";
 
 export const AuthContext = createContext({} as AuthContextData);
 

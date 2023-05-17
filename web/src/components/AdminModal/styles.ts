@@ -7,14 +7,52 @@ export const ModalContainer = styled('div', {
   width: '100%',
 
   button: {
-      width: '100%',
+    width: '100%',
+  },
+
+  '.fieldsContainer': {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: '0.5rem',
+    maxWidth: '22rem',
+
+    '.checkboxContainer': {
+      display: 'flex',
+      flexDirection: 'row',
+      gap: '0.25rem'
+    },
+  },
+
+  '.operator': {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'left',
+    gap: '0.5rem',
+    border: 0,
+    borderRadius: '0.25rem',
+    outline: 0,
+    backgroundColor: 'transparent',
+    fontSize: '1rem',
+    padding: '0.375rem',
+    appearance: 'none',
+    textAlign: 'center',
+    width: 'min-content',
+
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.05)'
+    },
+
+    '&:active': {
+      backgroundColor: 'rgba(0, 0, 0, 0.08)'
+    },
   },
 
   '.menuList': {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.25rem',
-    
+
     '@media screen and (min-width: 768px)': {
       minWidth: '19rem',
     },
@@ -30,7 +68,7 @@ export const ModalContainer = styled('div', {
       '&:hover': {
         backgroundColor: 'rgba(0, 0, 0, 0.05)'
       },
-  
+
       '&:active': {
         backgroundColor: 'rgba(0, 0, 0, 0.08)'
       },
@@ -53,36 +91,36 @@ export const ModalContainer = styled('div', {
   },
 
   '.sendButton': {
-      backgroundColor: '$green_600',
-      color: 'white',
+    backgroundColor: '$green_600',
+    color: 'white',
 
-      '&:hover': {
-          filter: 'brightness(0.95)'
-      }
+    '&:hover': {
+      filter: 'brightness(0.95)'
+    }
   },
 
   '.editInput': {
-      backgroundColor: 'transparent',
-      border: 0,
+    backgroundColor: 'transparent',
+    border: 0,
+    outline: 0,
+    padding: '0.25rem',
+    width: '100%',
+
+    '&:hover': {
+      backgroundColor: 'rgba(154, 230, 180, 0.5)'
+    },
+
+    '&:focus': {
       outline: 0,
-      padding: '0.25rem',
-      width: '100%',
-
-      '&:hover': {
-          backgroundColor: 'rgba(154, 230, 180, 0.5)'
-      },
-
-      '&:focus': {
-          outline: 0,
-          border: 0,
-          backgroundColor: '$green_200'
-      }
+      border: 0,
+      backgroundColor: '$green_200'
+    }
   },
 
   '.row': {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: '0.5rem'
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '0.5rem'
   }
 })

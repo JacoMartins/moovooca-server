@@ -1,8 +1,8 @@
 import Head from "next/head";
 import { BodyContainer, ListButton, Main, Sidebar } from "../../styles/pages/admin";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "../../styles/pages/entrar";
-import { Bus, Compass, MapPin } from "phosphor-react";
+import { Bus, Compass, House, MapPin, SignOut, Wrench } from "phosphor-react";
 import { useRouter } from "next/router";
 import { api } from "../../services/api";
 import { Usuario } from "../../types/api/usuario";
@@ -18,12 +18,46 @@ import AdminUsuarios from "./sub/usuarios"
 import AdminViagens from "./sub/viagens"
 import AdminDashboard from "./sub/dashboard"
 import AdminSentidos from "./sub/sentidos";
+import ProfileButton from "../../components/ProfileButton";
+
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { logout, reload } from "../../contexts/AuthContext";
 
 export default function Admin({ me, item_id }) {
   const router = useRouter()
   const { sub } = router.query
   const [SPAPage, setSPAPage] = useState<string>(sub as string)
   const [sidebar, setSidebar] = useState<boolean>(false)
+
+  useEffect(() => {
+    setSPAPage(sub as string)
+  }, [sub, router.asPath])
+
+  function goTo(route: string) {
+    router.push(route)
+  }
+
+  function handleOpenSidebar() {
+    setSidebar(true)
+  }
+
+  function handleCloseSidebar() {
+    setSidebar(false)
+  }
+
+  function handleSub(page: string) {
+    goTo(`/admin/${page}`)
+    handleCloseSidebar()
+  }
+
+  function handleLogout() {
+    logout()
+    reload()
+  }
+
+  if (!me || !me.admin) {
+    return <Forbidden />
+  }
 
   const pages = [
     {
@@ -76,31 +110,6 @@ export default function Admin({ me, item_id }) {
     },
   ]
 
-  function goTo(route: string) {
-    router.push(route)
-  }
-
-  function handleOpenSidebar() {
-    setSidebar(true)
-  }
-
-  function handleCloseSidebar() {
-    setSidebar(false)
-  }
-  
-  function handleSub(page: string) {
-    goTo(`/admin/${page}`)
-    handleCloseSidebar()
-  }
-  
-  if (!me || !me.admin) {
-    return <Forbidden />
-  }
-
-  useEffect(() => {
-    setSPAPage(sub as string)
-  }, [router.asPath])
-
   return (
     <>
       <Head>
@@ -118,10 +127,51 @@ export default function Admin({ me, item_id }) {
                     moovooca
                   </span>
                 </Logo>
-                <h4>Administrador</h4>
+
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild={false} className="DropdownMenuButton">
+                    <div className="userContainer">
+                      <ProfileButton mainName={me.nome} />
+
+                      <div className="userInfoContainer">
+                        <span>{me.nome}</span>
+                        <span>Administrador</span>
+                      </div>
+                    </div>
+                  </DropdownMenu.Trigger>
+
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content className="DropdownMenuContent" style={{ zIndex: 2 }} sideOffset={5}>
+                      <DropdownMenu.Arrow className="DropdownMenuArrow" />
+
+                      <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/')}>
+                        <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
+                          <House size={14} weight="fill" color="rgba(0, 0, 0, 0.8)" />
+                        </DropdownMenu.Item>
+                        Voltar ao Início
+                      </DropdownMenu.Item>
+
+                      <DropdownMenu.Item className="DropdownMenuItem" onClick={() => goTo('/reservas')}>
+                        <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
+                          <ListBullets size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
+                        </DropdownMenu.Item>
+                        Minhas reservas
+                      </DropdownMenu.Item>
+
+                      <DropdownMenu.Separator className="DropdownMenuSeparator" />
+
+                      <DropdownMenu.Item className="DropdownMenuItem" onClick={handleLogout}>
+                        <DropdownMenu.Item className="DropdownMenuItemIndicator" asChild={false}>
+                          <SignOut size={14} weight="bold" color="rgba(0, 0, 0, 0.8)" />
+                        </DropdownMenu.Item>
+                        Sair
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+
                 <hr></hr>
                 <div className="listContainer">
-
                   {pages.map(page => (
                     <ListButton key={page.name} isActive={SPAPage === page.name} onClick={() => handleSub(page.name)}>
                       {page.icon}

@@ -1,19 +1,8 @@
 import { CaretDoubleLeft, CaretDoubleRight, CaretLeft, CaretRight } from "phosphor-react";
 import { useRef } from "react";
+import { PaginatorProps } from "../../types/components/PaginatorProps";
 import { int } from "../../utils/convert";
 import { Main } from "./styles";
-
-interface PaginatorProps {
-  page: number;
-  setPage: (page:number) => void;
-  update?: boolean;
-  setUpdate?: (arg0: boolean) => void;
-  data: {
-    items: object[];
-    pages: string;
-    page: string;
-  };
-}
 
 export default function Paginator({ page, setPage, update, setUpdate, data }:PaginatorProps) {
   const pageContainerRef = useRef<HTMLDivElement>()
