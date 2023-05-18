@@ -26,6 +26,12 @@ class LinhaList(MethodView):
     per_page = req.args.get('limit', type=int)
 
     linhas = LinhaModel.query
+
+    print('\n')
+    
+    for key in LinhaModel.__dict__.keys():
+      if (not key.startswith('_')):
+        req.args.get(key)
     
     if tipo:
       linhas = linhas.filter(LinhaModel.tipo == tipo)

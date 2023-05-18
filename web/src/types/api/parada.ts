@@ -6,7 +6,6 @@ export interface parada {
   id_linha: number | null;
   id_sentido: number | null;
   parada: string;
-  minutos: number;
   latitude: number;
   longitude: number;
   criado_em: string;

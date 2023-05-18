@@ -11,7 +11,6 @@ import { clean_object } from "../../../../utils/clean_object"
 import Paginator from "../../../../components/Paginator"
 import AdminModal from "../../../../components/AdminModal"
 import { AdminSubProps } from "../../../../types/pages/AdminSub"
-import { CSVLink } from 'react-csv'
 
 export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }: AdminSubProps) {
   const router = useRouter()
@@ -19,8 +18,6 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
   const [linhas, setLinhas] = useState<paginated_linhas>()
   const [dataBusy, setDataBusy] = useState<boolean>(false)
   const [update, setUpdate] = useState<boolean>(false)
-  const [busy, setBusy] = useState<boolean>(false)
-  const [searchInput, setSearchInput] = useState<string>('')
 
   const [modal, setModal] = useState<boolean>(false)
   const [modalItem, setModalItem] = useState<number>()
@@ -141,6 +138,7 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
         itemDataRequest={itemDataRequest}
         setItemDataRequest={setItemDataRequest}
         buttonBusy={buttonBusy}
+        setButtonBusy={setButtonBusy}
         handleSub={handleSub}
         setUpdate={setUpdate}
         update={update}

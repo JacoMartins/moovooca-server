@@ -86,6 +86,7 @@ class LinhaSchema(Schema):
   valor_meia = fields.Float(required=True)
   tipo = fields.Str(required=True)
   capacidade_assento = fields.Int(required=True)
+  tags = fields.Str()
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 
@@ -121,6 +122,7 @@ class PlainLinhaSchema(Schema):
   valor_meia = fields.Float(required=True)
   tipo = fields.Str(required=True)
   capacidade_assento = fields.Int(required=True)
+  tags = fields.Str()
   criado_em = fields.DateTime()
   atualizado_em = fields.DateTime()
 

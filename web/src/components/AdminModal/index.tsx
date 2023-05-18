@@ -1,20 +1,49 @@
 import { ArrowSquareOut, CircleNotch, PencilSimple, Trash, X } from "phosphor-react"
 import { useState } from "react"
 import { ChangeEvent, HTMLInputTypeAttribute } from "react"
+import { CSVLink } from "react-csv"
 import Modal from 'react-modal'
 import { api } from "../../services/api"
+import { paginated_linhas } from "../../types/api/linha"
 import { clean_object } from "../../utils/clean_object"
+import { int } from "../../utils/convert"
 import { ModalContainer } from "./styles"
 
-export default function AdminModal({ isOpen, onRequestClose, modalType, modalItem, schema, handleAddItem, handleOpenEditModal, handleEditItem, itemData, itemDataRequest, setItemDataRequest, buttonBusy, handleSub, setUpdate, update }) {
+export default function AdminModal({ isOpen, onRequestClose, modalType, modalItem, schema, handleAddItem, handleOpenEditModal, handleEditItem, itemData, itemDataRequest, setItemDataRequest, buttonBusy, setButtonBusy, handleSub, setUpdate, update }) {
   const [filterObj, setFilterObj] = useState<any>({})
+  const [limitBool, setLimitBool] = useState<boolean>(false)
   const [limit, setLimit] = useState<number>()
-  const [exportPage, setExportPage] = useState<number>()
+  const [exportPage, setExportPage] = useState<number>(1)
+  const [exportData, setExportData] = useState<paginated_linhas>()
 
-  async function handleBringExportData(limit: number, page: number) {
-    const result = await api.get(`/${schema.name + 's'}?page=${page}&limit=${limit}`);
-    return result
+  async function handleBringExportData(limit: number | null, page: number) {
+    setButtonBusy(true)
+
+    await api.get(`/${schema.name + 's'}?page=${page}${limit && '&limit=' + limit}`).then(res => setExportData({
+      items: res.data.items.map(item => {
+        const { sentidos, ...rest } = Object.assign({ ...schema.fields }, item)
+        return rest
+      }),
+      pages: res.data.pages,
+      page: res.data.page,
+    }));
+
+    setButtonBusy(false)
   }
+
+  function handleToggleLimit() {
+    if (limitBool) {
+      setLimitBool(false)
+      setLimit(null)
+      setExportPage(1)
+
+      handleBringExportData(null, 1)
+    } else {
+      setLimitBool(true)
+    }
+  }
+
+  !exportData && handleBringExportData(null, 1)
 
   function handleToggleField(field: string) {
     if (Object.keys(filterObj).find(item => item === field)) {
@@ -164,82 +193,99 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
               </div>
             }
 
-            {
-              modalType === 4 &&
-              <>
-                <span>Campos</span>
-                <div className="fieldsContainer">
-                  {Object.entries(clean_object({ ...schema.fields })).map(([key, value]) => {
-                    const key_id = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+            <div className="filterContainer">
+              {
+                modalType === 4 &&
+                <>
+                  <span>Campos</span>
+                  <div className="fieldsContainer">
+                    {Object.entries(clean_object({ ...schema.fields })).map(([key, value]) => {
+                      const key_id = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
-                    return (
-                      <div key={key_id} className="checkboxContainer">
-                        <input
-                          type='checkbox'
-                          id={key + key_id}
-                          name={key + key_id}
-                          onChange={() => handleToggleField(key)}
-                          checked={Object.keys(filterObj).find(item => item === key) && true}
-                        />
-                        <label htmlFor={key + key_id}>{key}</label>
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            }
-
-            {
-              (modalType === 4 && filterObj) &&
-              Object.entries(filterObj).map(([key, value]) => {
-                const type = setInputType(key, value)
-                const defaultValue = padronizeValue(key, value)
-
-                return (
-                  <div key={key} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    gap: '0.25rem'
-                  }}>
-                    <div className="field">
-                      {key}
-                    </div>
-                    <select className="operator">
-                      <option>=</option>
-                      <option>{'<'}</option>
-                      <option>{'>'}</option>
-                      <option>NOT</option>
-                    </select>
-                    <input
-                      className="editInput"
-                      type={type}
-                      defaultValue={defaultValue}
-                      onChange={event => handleChangeInput(key, value, event)}
-                    />
+                      return (
+                        <div key={key_id} className="checkboxContainer">
+                          <input
+                            type='checkbox'
+                            id={key + key_id}
+                            name={key + key_id}
+                            onChange={() => handleToggleField(key)}
+                            checked={Object.keys(filterObj).find(item => item === key) && true}
+                          />
+                          <label htmlFor={key + key_id}>{key}</label>
+                        </div>
+                      )
+                    })}
                   </div>
-                )
-              })
-            }
+                </>
+              }
+              {
+                (modalType === 4 && filterObj) &&
+                Object.entries(filterObj).map(([key, value]) => {
+                  const type = setInputType(key, value)
+                  const defaultValue = padronizeValue(key, value)
+
+                  return (
+                    <div key={key} className="filterFieldContainer">
+                      <div className="field">
+                        {key}
+                      </div>
+                      <select className="operator">
+                        <option>=</option>
+                        <option>{'<'}</option>
+                        <option>{'>'}</option>
+                        <option>NOT</option>
+                      </select>
+                      <input
+                        className="editInput"
+                        type={type}
+                        defaultValue={defaultValue}
+                        onChange={event => handleChangeInput(key, value, event)}
+                      />
+                    </div>
+                  )
+                })
+              }
+            </div>
 
             {
               modalType === 5 &&
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem'
-              }}>
-                <span>Limite de items para exportação (Vazio para exportar tudo):</span>
-                <input type="number" onChange={event => setLimit(event.target.valueAsNumber)} />
-                <button className="sendButton" onClick={() => handleBringExportData(limit, exportPage)} disabled={buttonBusy}>
-                  {buttonBusy ?
-                    <>
-                      <CircleNotch className="load" size={20} weight='regular' color="white" />
-                      Exportando dados...
-                    </>
-                    :
-                    'Exportar'}
-                </button>
+              <div className="exportContainer">
+                <div className="checkboxContainer">
+                  <input
+                    type='checkbox'
+                    id='exportLimitCheckbox'
+                    name='exportLimitCheckbox'
+                    onChange={handleToggleLimit}
+                    checked={limitBool}
+                  />
+                  <label htmlFor='exportLimitCheckbox'>Usar limite e paginação?</label>
+                </div>
+                {limitBool && <input placeholder="Insira o limite desejado" type="number" onChange={event => { setLimit(event.target.valueAsNumber); handleBringExportData(event.target.valueAsNumber, exportPage) }} />}
+                {
+                  exportData &&
+                  <>
+                    <div className="selectPageContainer">
+                      <span>Página:</span>
+                      <select className="operator" onChange={event => { setExportPage(int(event.target.value)); handleBringExportData(limit, int(event.target.value)) }}>
+                        {[...Array(int(exportData.pages))].map((key, value) => <option>
+                          {value + 1}
+                        </option>)}
+                      </select>
+                    </div>
+                    <span>Total de Páginas: {exportData.pages}</span>
+                    <CSVLink data={exportData.items} filename={`linhas${new Date().toISOString()}.csv`} onClick={onRequestClose}>
+                      <button className="sendButton" disabled={buttonBusy}>
+                        {buttonBusy ?
+                          <>
+                            <CircleNotch className="load" size={20} weight='regular' color="white" />
+                            Obtendo os dados...
+                          </>
+                          :
+                          'Exportar'}
+                      </button>
+                    </CSVLink>
+                  </>
+                }
               </div>
             }
           </div>

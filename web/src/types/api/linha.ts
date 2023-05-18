@@ -9,6 +9,7 @@ export interface linha {
   valor_meia: number;
   tipo: string;
   capacidade_assento: number;
+  tags: string;
   criado_em: string;
   atualizado_em: string;
   sentidos?: sentido[];

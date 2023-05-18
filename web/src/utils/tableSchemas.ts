@@ -15,6 +15,7 @@ export const linhaSchema:linha_co = {
     valor_inteira: 0,
     valor_meia: 0,
     tipo: '',
+    tags: '',
     capacidade_assento: 0,
     criado_em: new Date().toUTCString(),
     atualizado_em: ''
@@ -43,7 +44,6 @@ export const paradaSchema:parada_co = {
     id_linha: 0,
     id_sentido: 0,
     parada: '',
-    minutos: 0,
     latitude: 0,
     longitude: 0,
     criado_em: '',

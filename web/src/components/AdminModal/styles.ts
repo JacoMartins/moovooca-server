@@ -6,8 +6,44 @@ export const ModalContainer = styled('div', {
   gap: '1rem',
   width: '100%',
 
+  a: {
+    textDecoration: 'none',
+  },
+
   button: {
     width: '100%',
+  },
+
+  '.checkboxContainer': {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '0.25rem'
+  },
+
+  '.exportContainer': {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+    minWidth: '17.37500rem',
+  },
+
+  '.filterContainer': {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+    maxWidth: '20rem',
+
+    '.filterFieldContainer': {
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: '0.25rem',
+      width: '100%',
+
+      input: {
+        width: '100%',
+      }
+    }
   },
 
   '.fieldsContainer': {
@@ -15,13 +51,17 @@ export const ModalContainer = styled('div', {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: '0.5rem',
-    maxWidth: '22rem',
+  },
 
-    '.checkboxContainer': {
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '0.25rem'
-    },
+  '.selectPageContainer': {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    select: {
+      width: '100%',
+      textAlign: 'left',
+    }
   },
 
   '.operator': {
@@ -93,6 +133,7 @@ export const ModalContainer = styled('div', {
   '.sendButton': {
     backgroundColor: '$green_600',
     color: 'white',
+    textDecoration: 'none',
 
     '&:hover': {
       filter: 'brightness(0.95)'
