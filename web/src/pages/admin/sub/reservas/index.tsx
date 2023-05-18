@@ -112,7 +112,7 @@ export default function AdminReservas({ item_id, handleSub, handleOpenSidebar, h
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/reservas?page=${page}`).then(res => setReservas(res.data))
+        await api.get(`/reservas?page=${page}&limit=15`).then(res => setReservas(res.data))
       }
 
       setDataBusy(false)

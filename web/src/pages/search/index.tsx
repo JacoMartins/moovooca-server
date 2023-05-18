@@ -114,7 +114,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const page = context.query.page ? context.query.page : 1
   const query = context.query.query || '';
 
-  const { data: linhas } = await api.get(`/linhas/search?query=${query}&page=${page}`);
+  const { data: linhas } = await api.get(`/linhas/search?query=${query}&page=${page}&limit=15`);
   // const { data: texto_gerado } = await api.post(`/linhas/search?query=${query}`);
 
   return {

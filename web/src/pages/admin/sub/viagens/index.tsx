@@ -112,7 +112,7 @@ export default function AdminViagens({ item_id, handleSub, handleOpenSidebar, ha
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/viagens?page=${page}`).then(res => setViagens(res.data))
+        await api.get(`/viagens?page=${page}&limit=15`).then(res => setViagens(res.data))
       }
 
       setDataBusy(false)

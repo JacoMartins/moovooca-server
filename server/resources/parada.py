@@ -23,7 +23,7 @@ class ParadaList(MethodView):
     sentido_id = req.args.get('sentido')
 
     page = req.args.get('page', type=int)
-    per_page = 15
+    per_page = req.args.get('limit', type=int)
 
     paradas = ParadaModel.query
 

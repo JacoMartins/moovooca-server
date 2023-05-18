@@ -21,7 +21,7 @@ class SentidoList(MethodView):
     linha_id = req.args.get('linha')
 
     page = req.args.get('page', type=int)
-    per_page = 15
+    per_page = req.args.get('limit', type=int)
 
     sentidos = SentidoModel.query
     

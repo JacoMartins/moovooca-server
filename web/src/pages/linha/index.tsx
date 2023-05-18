@@ -88,7 +88,7 @@ export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps)
                     <span>{linha.campus}</span>
                   </div>
                 </div>
-                <p>A linha {linha.cod} - {linha.nome} de ônibus tem {paradas.length} paradas partindo de {sentido.ponto_partida}, terminando em {sentido.ponto_destino}.</p>
+                <p>A linha {linha.cod} - {linha.nome} de ônibus tem {paradas.items.length} paradas partindo de {sentido.ponto_partida}, terminando em {sentido.ponto_destino}.</p>
                 <p>A grade horária da linha {linha.cod} {linha.nome} de ônibus para a próxima semana: Começa a operar às {sentido.horario_inicio} e termina às {sentido.horario_fim}. Dias de operação durante a semana: todos os dias.</p>
 
                 <div className="buttonContainer">
@@ -97,10 +97,10 @@ export default function Linha({ linha, sentido, sentidos, paradas }: LinhaProps)
 
                 <StopContainer>
                   <div className="stopsHeaderContainer">
-                    <h3>Sentido {sentido.sentido} ({paradas.length} paradas)</h3>
+                    <h3>Sentido {sentido.sentido} ({paradas.items.length} paradas)</h3>
                   </div>
                   <ul className="stopsContainer">
-                    {paradas.map(parada => (
+                    {paradas.items.map(parada => (
                       <li className="stopItem" key={parada.id}>
                         <p>{parada.parada}</p>
                       </li>
@@ -131,13 +131,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { data: linha } = await api.get(`/linha?id=${id}`);
   const { data: sentido } = await api.get(`/sentido?id=${sid}`);
   const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}`);
+  const { data: paradas } = await api.get(`/paradas?linha=${linha.id}&sentido=${sid}`);
 
   return {
     props: {
       linha: linha,
       sentido: sentido,
       sentidos: sentidos.items,
-      paradas: sentido.paradas
+      paradas
     }
   }
 }

@@ -113,7 +113,7 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/sentidos?page=${page}`).then(res => setSentidos(res.data))
+        await api.get(`/sentidos?page=${page}&limit=15`).then(res => setSentidos(res.data))
       }
 
       setDataBusy(false)

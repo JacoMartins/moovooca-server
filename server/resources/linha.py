@@ -23,7 +23,7 @@ class LinhaList(MethodView):
     tipo = req.args.get('tipo')
 
     page = req.args.get('page', type=int)
-    per_page = 15
+    per_page = req.args.get('limit', type=int)
 
     linhas = LinhaModel.query
     

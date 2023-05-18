@@ -23,7 +23,7 @@ class ViagemList(MethodView):
     data_arg = req.args.get('data')
     
     page = req.args.get('page', type=int)
-    per_page = 15
+    per_page = req.args.get('limit', type=int)
     
     viagens = ViagemModel.query
 

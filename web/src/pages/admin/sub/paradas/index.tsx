@@ -112,7 +112,7 @@ export default function AdminParadas({ item_id, handleSub, handleOpenSidebar, ha
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/paradas?page=${page}`).then(res => setParadas(res.data))
+        await api.get(`/paradas?page=${page}&limit=15`).then(res => setParadas(res.data))
       }
 
       setDataBusy(false)

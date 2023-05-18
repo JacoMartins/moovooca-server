@@ -7,12 +7,18 @@ import { clean_object } from "../../utils/clean_object"
 import { ModalContainer } from "./styles"
 
 export default function AdminModal({ isOpen, onRequestClose, modalType, modalItem, schema, handleAddItem, handleOpenEditModal, handleEditItem, itemData, itemDataRequest, setItemDataRequest, buttonBusy, handleSub, setUpdate, update }) {
-  Modal.setAppElement('.react-modal')
   const [filterObj, setFilterObj] = useState<any>({})
+  const [limit, setLimit] = useState<number>()
+  const [exportPage, setExportPage] = useState<number>()
+
+  async function handleBringExportData(limit: number, page: number) {
+    const result = await api.get(`/${schema.name + 's'}?page=${page}&limit=${limit}`);
+    return result
+  }
 
   function handleToggleField(field: string) {
     if (Object.keys(filterObj).find(item => item === field)) {
-      const { [field]:property, ...rest } = filterObj
+      const { [field]: property, ...rest } = filterObj
       setFilterObj(rest)
     } else {
       const [property, value] = Object.entries(clean_object(schema.fields)).find(([key, value]) => key === field)
@@ -57,6 +63,8 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
     }
   }
 
+  Modal.setAppElement('.react-modal')
+
   return (
     <Modal
       isOpen={isOpen}
@@ -71,6 +79,7 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
           {modalType === 2 && 'Erro'}
           {modalType === 3 && `Item ${modalItem}`}
           {modalType === 4 && `Filtrar items`}
+          {modalType === 5 && `Exportar para CSV`}
         </h2>
         <X className="react-modal-close" size={24} onClick={onRequestClose} />
       </div>
@@ -211,6 +220,27 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
                   </div>
                 )
               })
+            }
+
+            {
+              modalType === 5 &&
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem'
+              }}>
+                <span>Limite de items para exportação (Vazio para exportar tudo):</span>
+                <input type="number" onChange={event => setLimit(event.target.valueAsNumber)} />
+                <button className="sendButton" onClick={() => handleBringExportData(limit, exportPage)} disabled={buttonBusy}>
+                  {buttonBusy ?
+                    <>
+                      <CircleNotch className="load" size={20} weight='regular' color="white" />
+                      Exportando dados...
+                    </>
+                    :
+                    'Exportar'}
+                </button>
+              </div>
             }
           </div>
         </ModalContainer>

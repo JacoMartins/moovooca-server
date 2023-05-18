@@ -14,6 +14,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { GlobalMain } from "../../styles/global";
 import Paginator from '../../components/Paginator'
 import { int } from '../../utils/convert'
+import { sentido } from '../../types/api/sentido'
 
 export default function Linhas({ head_coletivos, head_privados, page }) {
   const router = useRouter()
@@ -49,12 +50,12 @@ export default function Linhas({ head_coletivos, head_privados, page }) {
 
   useEffect(() => {
     if (modalType === 0) {
-      const fetch = async () => await api.get(`/linhas?tipo=COLETIVO&page=${page}`).then(res => setColetivos(res.data))
+      const fetch = async () => await api.get(`/linhas?tipo=COLETIVO&page=${page}&limit=15`).then(res => setColetivos(res.data))
       fetch()
     }
 
     if (modalType === 1) {
-      const fetch = async () => await api.get(`/linhas?tipo=PRIVADO&page=${page}`).then(res => setPrivados(res.data))
+      const fetch = async () => await api.get(`/linhas?tipo=PRIVADO&page=${page}&limit=15`).then(res => setPrivados(res.data))
       fetch()
     }
   }, [modalType, page])
@@ -225,8 +226,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { page } = context.query
   const page_ = page ? page : 1
 
-  const { data: head_coletivos } = await api.get(`/linhas?tipo=COLETIVO&page=${page_}`);
-  const { data: head_privados } = await api.get(`/linhas?tipo=PRIVADO&page=${page_}`);
+  const { data: head_coletivos } = await api.get(`/linhas?tipo=COLETIVO&page=${page_}&limit=15`);
+  const { data: head_privados } = await api.get(`/linhas?tipo=PRIVADO&page=${page_}&limit=15`);
 
   return {
     props: {

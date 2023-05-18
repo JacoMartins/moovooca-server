@@ -112,7 +112,7 @@ export default function AdminUsuarios({ item_id, handleSub, handleOpenSidebar, h
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/usuarios?page=${page}`).then(res => setUsuarios(res.data))
+        await api.get(`/usuarios?page=${page}&limit=15`).then(res => setUsuarios(res.data))
       }
 
       setDataBusy(false)

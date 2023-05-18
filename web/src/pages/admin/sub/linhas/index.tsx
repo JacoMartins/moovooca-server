@@ -40,8 +40,12 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
   function handleOpenMenuModal(id: number) {
     setModal(true)
     setModalItem(id)
-
     setModalType(3)
+  }
+
+  function handleOpenExportModal() {
+    setModal(true)
+    setModalType(5)
   }
 
   function handleOpenAddModal() {
@@ -51,7 +55,6 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
     setModalItem(null)
     setItemData(obj)
     setItemDataRequest(obj)
-
     setModalType(1)
   }
 
@@ -114,7 +117,7 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
           page: '1'
         })).catch(() => handleOpenErrorModal())
       } else {
-        await api.get(`/linhas?page=${page}`).then(res => setLinhas(res.data))
+        await api.get(`/linhas?page=${page}&limit=15`).then(res => setLinhas(res.data))
       }
 
       setDataBusy(false)
@@ -154,12 +157,11 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
         <h3 className='lead'>Selecione, adicione, altere ou remova linhas.</h3>
         <div className="actionsContainer">
           {linhas &&
-            <CSVLink data={linhas.items.map(item => Object.assign({ ...linhaSchema.fields }, item))} filename={`linhas${new Date().toISOString()}.csv`}>
-              <button>
-                <Export size={18} weight='regular' color='#276749' />
-                Exportar para CSV
-              </button>
-            </CSVLink>}
+            <button onClick={handleOpenExportModal}>
+              <Export size={18} weight='regular' color='#276749' />
+              Exportar para CSV
+            </button>
+          }
 
           <button onClick={handleOpenFilterModal}>
             <Funnel size={18} weight='regular' color='#276749' />
@@ -171,7 +173,7 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
       <button className="addButton" onClick={() => handleOpenAddModal()}><Plus size={24} weight='regular' color='white' /></button>
 
       <section className='lineSection'>
-        <Table header={Object.keys(linhaSchema.fields)}>
+        <Table header={Object.keys(linhaSchema.fields).filter(item => item !== 'sentidos')}>
           {dataBusy ?
             <tr>
               <td style={{

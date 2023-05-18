@@ -1,5 +1,5 @@
 import { linha } from "../api/linha";
-import { parada } from "../api/parada";
+import { paginated_paradas, parada } from "../api/parada";
 import { sentido } from "../api/sentido";
 
 export interface LinhaProps {
@@ -7,5 +7,5 @@ export interface LinhaProps {
   linha: linha;
   sentido: sentido;
   sentidos: sentido[];
-  paradas: parada[];
+  paradas: paginated_paradas;
 } 

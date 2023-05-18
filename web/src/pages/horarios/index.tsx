@@ -151,8 +151,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const { data: linha } = await api.get(`/linha?id=${lid}`);
   const { data: sentido } = await api.get(`/sentido?id=${sid}`);
-  const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}&page=${page ? page : 1}`);
-  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}&data=hoje&page=${page ? page : 1}`)
+  const { data: sentidos } = await api.get(`/sentidos?linha=${linha.id}&page=${page ? page : 1}&limit=15`);
+  const { data: viagens } = await api.get(`/viagens?linha=${lid}&sentido=${sid}&data=hoje`)
 
   return {
     props: {
