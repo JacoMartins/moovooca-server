@@ -28,7 +28,7 @@ export const sentidoSchema:sentido_co = {
   dependants: ['parada', 'viagem'],
   fields: {
     id: null,
-    id_linha: null,
+    id_linha: 0,
     sentido: '',
     ponto_partida: '',
     ponto_destino: '',
@@ -59,8 +59,8 @@ export const reservaSchema:reserva_co = {
   dependants: [],
   fields: {
     id: null,
-    id_viagem: null,
-    id_usuario: null,
+    id_viagem: 0,
+    id_usuario: 0,
     cod: 0,
     forma_pagamento: '',
     criado_em: '',
@@ -90,9 +90,9 @@ export const viagemSchema:viagem_co = {
   dependants: ['reserva'],
   fields: {
     id: null,
-    id_linha: null,
-    id_sentido: null,
-    id_motorista: null,
+    id_linha: 0,
+    id_sentido: 0,
+    id_motorista: 0,
     data: '',
     origem: '',
     destino: '',

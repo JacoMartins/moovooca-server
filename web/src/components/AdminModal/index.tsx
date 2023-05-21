@@ -101,10 +101,8 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
   function handleChangeInput(key: string, value: any, event: ChangeEvent<HTMLInputElement>) {
     setItemDataRequest({
       ...itemDataRequest,
-      [key]: typeof value === 'number' ? event.target.valueAsNumber : event.target.value
+      [key]: (key === 'cod' || key === 'latitude' || key === 'longitude') ? event.target.value : typeof value === 'number' ? event.target.valueAsNumber : event.target.value
     })
-
-    console.log(itemDataRequest)
   }
 
   function handleFilterItems() {

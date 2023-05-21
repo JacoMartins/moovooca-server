@@ -28,10 +28,10 @@ class ViagemList(MethodView):
     viagens = ViagemModel.query
 
     if linha_id:
-      viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.data)
+      viagens = viagens.filter(ViagemModel.id_linha == linha_id)
 
     if sentido_id:
-      viagens = viagens.filter(ViagemModel.id_sentido == sentido_id, ViagemModel.data)
+      viagens = viagens.filter(ViagemModel.id_sentido == sentido_id)
 
     if data_arg:
       data = datetime(datetime.today().year, datetime.today().month, datetime.today().day) if data_arg == 'hoje' else datetime.strptime(data_arg, '%d-%m-%Y')
