@@ -18,10 +18,13 @@ from resources.reserva import blp as ReservaBlueprint
 from resources.sentido import blp as SentidoBlueprint
 from resources.usuario import blp as UsuarioBlueprint
 from resources.viagem import blp as ViagemBlueprint
+import bcrypt
 
 from datetime import timedelta
 
 from blocklist import BLOCKLIST
+
+salt = bcrypt.gensalt()
 
 def create_app(db_url=None):
   app = Flask(__name__)
@@ -118,9 +121,29 @@ def create_app(db_url=None):
       }), 401
     )
 
-  # @app.before_first_request
-  # def create_tables():
-  #   db.create_all()
+  def seed_admin():
+    seed_senha = "password"
+  
+    usuario_admin = UsuarioModel.query.filter_by(nome_usuario="admin").first()
+    bytePassword = seed_senha.encode('utf-8')
+    hashPassword = bcrypt.hashpw(bytePassword, salt)
+  
+    if not usuario_admin:
+      usuario_admin = UsuarioModel(
+        nome_usuario="admin",
+        nome="Admin",
+        sobrenome="Moovooca",
+        senha=hashPassword.decode('utf-8'),
+        email="admin@seed.com",
+        admin=1
+      )
+  
+      db.session.add(usuario_admin)
+      db.session.commit()
+
+  with app.app_context():
+    db.create_all()
+    seed_admin()
 
   api.register_blueprint(LinhaBlueprint)
   api.register_blueprint(ParadaBlueprint)

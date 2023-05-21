@@ -123,9 +123,9 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
     switch (true) {
       case (key.startsWith('dat') || key === 'criado_em' || key === 'atualizado_em' || key === 'horario_partida' || key === 'horario_chegada'): return 'datetime-local'
       case (key === 'horario_inicio' || key === 'horario_fim'): return 'time'
+      case (key === 'senha'): return 'password'
       case (typeof value === 'number'): return 'number'
       case (typeof value === 'string'): return 'text'
-      case (key === 'senha'): return 'password'
     }
   }
 
