@@ -1,50 +1,59 @@
-# Frontend
+# Documentação Movooca
 
-# Moovooca-Next
+## Introdução
 
-Este é um aplicativo Next.js chamado moovooca que utiliza várias dependências para sua funcionalidade. O objetivo deste readme é orientá-lo através dos passos para iniciar a aplicação.
+Este documento tem como objetivo orientar o usuário na execução do projeto Movooca, que utiliza Next.js no frontend e Flask-Python no backend.
 
-## Requisitos
+O projeto Moovooca é uma aplicação web que visa melhorar a gerência e a pesquisa de várias linhas de ônibus, com intuito de chegar ao campus de uma faculdade de preferência. O frontend foi desenvolvido utilizando o framework NextJS, e no backend foi utilizado Python com o framework Flask. Além disso, a aplicação utiliza um banco de dados PostgreSQL para armazenar as informações necessárias.
 
-Antes de começar, certifique-se de que você tem o Node.js instalado em seu sistema. Você pode baixar a versão mais recente do Node.js em nodejs.org.
+Abaixo, segue a lista das bibliotecas utilizadas no projeto:
 
-## Instalação
+Frontend (NodeJS):
 
-Clone o repositório ou baixe o código fonte em um arquivo zip.
+- NextJS
+- Radix
+- Google Maps React
+- Axios para chamadas à API
+- MomentJS para gerênciamento de datas
+- Nookies
+- Phosphor React (Ícones)
+- React CSV para exportação de dados no dashboard admin
+- React Modal
 
-```git clone https://github.com/JacoMartins/pet-computacao.git```
+Backend (Python):
 
-Navegue até o diretório do projeto.
+- Flask
+- Flask MSearch
+- Flask Smorest
+- Flask Cors
+- Flask JWT
+- Python Dotenv
+- SqlAlchemy
+- Bcrypt
+- Numpy 1.21.3
+- OpenAI 0.19.0
+- OpenPyxl 3.0.9
+- Pandas 1.3.4
+- Pandas Stubs 1.2.0.35
 
-```cd pet-computacao```
+## Pré-requisitos
 
-Instale as dependências.
+Para executar o projeto, é necessário ter o [Docker](https://www.docker.com/) e o [Docker Compose](https://docs.docker.com/compose/) instalados em sua máquina.
 
-```npm install```
+## Executando o projeto
 
-Inicie o servidor de desenvolvimento.
+1. Faça o download do código fonte do projeto através do GitHub ou do repositório fornecido pelo desenvolvedor.
+2. Abra o terminal na pasta raiz do projeto.
+3. Execute o comando `docker-compose up --build` ou `docker compose up -d`.
+4. Aguarde até que o Docker Compose baixe e crie as imagens necessárias e ligue os containers da aplicação.
+5. Acesse a aplicação através do endereço `http://localhost:3000` em seu navegador.
 
-```npm run dev```
+Caso deseje encerrar a execução do projeto, basta executar o comando `docker compose down`.
 
-## Scripts
+## Considerações finais
 
-- `dev`: Inicia o servidor de desenvolvimento.
-- `build`: Constrói o projeto para produção.
-- `start`: Inicia o servidor em produção.
-- `lint`: Executa a verificação de erros de linting.
+Este documento apresenta a documentação do projeto Movooca, que é uma aplicação web que utiliza Next.js no frontend e Flask-Python no backend. O objetivo da aplicação é melhorar a gerência e a pesquisa de várias linhas de ônibus, com intuito de chegar ao campus de uma faculdade de preferência.
 
-## Dependências
+São apresentadas as bibliotecas utilizadas tanto no frontend quanto no backend, os pré-requisitos necessários para a execução do projeto e instruções para executar o projeto utilizando Docker Compose.
 
-- `Next.js`: Next.js é um framework React de página única (SSR) que permite renderização do lado do servidor e do lado do cliente para aplicações web. É usado para construir aplicativos escaláveis ​​e fáceis de manter.
-- `@next/font`: @next/font é um plugin do Next.js que fornece uma maneira fácil de incluir fontes em seu aplicativo Next.js.
-- `@radix-ui/react-dropdown-menu`: @radix-ui/react-dropdown-menu é um pacote de componentes React para criar menus suspensos personalizáveis.
-- `@react-google-maps/api`: @react-google-maps/api é um pacote React que fornece uma maneira fácil de usar o Google Maps em um aplicativo React.
-- `@stitches/react`: @stitches/react é um pacote que fornece um mecanismo de estilo CSS-in-JS para React.
-- `@types/axios`: @types/axios é um pacote que fornece tipagem para o pacote de cliente HTTP Axios.
-- `@types/google-map-react`: @types/google-map-react é um pacote que fornece tipagem para o pacote React do Google Maps.
-- `@types/node`: @types/node é um pacote que fornece tipagem para o Node.js.
-- `@types/react`: @types/react é um pacote que fornece tipagem para o React.
-- `@types/react-dom`: @types/react-dom é um pacote que fornece tipagem para o ReactDOM.
-- `@types/react-modal`: @types/react-modal é um pacote que fornece tipagem para o componente React Modal.
-
-# Backend
+Em caso de dúvidas, consulte a documentação do Docker ou entre em contato com o desenvolvedor do projeto.
