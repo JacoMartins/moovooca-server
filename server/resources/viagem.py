@@ -27,16 +27,20 @@ class ViagemList(MethodView):
     
     viagens = ViagemModel.query
 
+    if linha_id:
+      viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.data)
+
+    if sentido_id:
+      viagens = viagens.filter(ViagemModel.id_sentido == sentido_id, ViagemModel.data)
+
     if data_arg:
       data = datetime(datetime.today().year, datetime.today().month, datetime.today().day) if data_arg == 'hoje' else datetime.strptime(data_arg, '%d-%m-%Y')
+      viagens = viagens.filter(ViagemModel.data >= data)
 
       self.post(linha_id, sentido_id, data_arg)
 
-    if linha_id and sentido_id:
-      viagens = viagens.filter(ViagemModel.id_linha == linha_id, ViagemModel.id_sentido == sentido_id, ViagemModel.data >= data)
-
     if page:
-      viagens = ViagemModel.query.paginate(page=page, per_page=per_page, error_out=False)
+      viagens = viagens.paginate(page=page, per_page=per_page, error_out=False)
 
       pagination_object = {
         "items": viagens.items,

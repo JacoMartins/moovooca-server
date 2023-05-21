@@ -24,5 +24,6 @@ export interface paginated_sentidos {
 
 export interface sentido_co {
   name: string,
+  dependants: string[],
   fields: sentido
 }

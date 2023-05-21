@@ -23,5 +23,6 @@ export interface paginated_linhas {
 
 export interface linha_co {
   name: string,
+  dependants: string[],
   fields: linha
 }

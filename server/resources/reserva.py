@@ -23,14 +23,23 @@ class ReservaList(MethodView):
     usuario_id = get_jwt_identity()
     usuario_admin = get_jwt()['admin']
 
+    usuario = req.args.get('usuario', type=int)
+    viagem = req.args.get('viagem', type=int)
+    
     page = req.args.get('page', type=int)
     per_page = req.args.get('limit', type=int)
 
     reservas = ReservaModel.query
 
-    if not usuario_admin:
+    if usuario_admin:
+      if usuario:
+        reservas = reservas.filter(ReservaModel.id_usuario == usuario_id)
+      
+      if viagem:
+        reservas = reservas.filter(ReservaModel.id_viagem == viagem)
+    else:
       reservas = reservas.filter(ReservaModel.id_usuario == usuario_id).order_by(ReservaModel.criado_em.desc())
-
+    
     if page:
       reservas = reservas.paginate(page=page, per_page=per_page, error_out=False)
 

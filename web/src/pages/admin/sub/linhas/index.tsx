@@ -28,6 +28,7 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
   const [itemDataRequest, setItemDataRequest] = useState<linha>()
 
   const [page, setPage] = useState<number>(1)
+  const showFilter = Object.keys(linhaSchema.fields).find(item => item.startsWith('id_'))
 
   function goTo(route: string) {
     event.preventDefault()
@@ -72,6 +73,8 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
   function handleOpenFilterModal() {
     setModal(true)
     setModalItem(null)
+    setItemData(null)
+    setItemDataRequest(null)
     setModalType(4)
   }
 
@@ -161,10 +164,13 @@ export default function AdminLinhas({ item_id, handleSub, handleOpenSidebar, han
             </button>
           }
 
-          <button onClick={handleOpenFilterModal}>
-            <Funnel size={18} weight='regular' color='#276749' />
-            Filtrar
-          </button>
+          {
+            showFilter &&
+            <button onClick={handleOpenFilterModal}>
+              <Funnel size={18} weight='regular' color='#276749' />
+              Filtrar
+            </button>
+          }
         </div>
       </section>
 

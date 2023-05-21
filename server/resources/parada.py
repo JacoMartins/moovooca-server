@@ -27,8 +27,11 @@ class ParadaList(MethodView):
 
     paradas = ParadaModel.query
 
-    if linha_id and sentido_id:
-      paradas = paradas.filter(ParadaModel.id_linha == linha_id, ParadaModel.id_sentido == sentido_id)
+    if linha_id :
+      paradas = paradas.filter(ParadaModel.id_linha == linha_id)
+
+    if sentido_id:
+      paradas = paradas.filter(ParadaModel.id_sentido == sentido_id)
 
     if page:
       paradas = paradas.paginate(page=page, per_page=per_page, error_out=False)

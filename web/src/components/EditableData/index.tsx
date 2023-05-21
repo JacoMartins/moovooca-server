@@ -16,7 +16,7 @@ export default function EditableData({ data, tableSchema, handleOpenMenuModal }:
         }
 
         return (
-          <td key={value + index.toString()}>
+          <td key={value + (Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000).toString() + index.toString()}>
             {value}
           </td>
         )

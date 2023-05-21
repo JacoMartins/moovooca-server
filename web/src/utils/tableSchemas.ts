@@ -7,6 +7,7 @@ import { viagem_co } from "../types/api/viagem"
 
 export const linhaSchema:linha_co = {
   name: 'linha',
+  dependants: ['sentido', 'parada', 'viagem'],
   fields: {
     id: null,
     cod: 0,
@@ -24,6 +25,7 @@ export const linhaSchema:linha_co = {
 
 export const sentidoSchema:sentido_co = {
   name: 'sentido',
+  dependants: ['parada', 'viagem'],
   fields: {
     id: null,
     id_linha: null,
@@ -39,6 +41,7 @@ export const sentidoSchema:sentido_co = {
 
 export const paradaSchema:parada_co = {
   name: 'parada',
+  dependants: [],
   fields: {
     id: null,
     id_linha: 0,
@@ -53,6 +56,7 @@ export const paradaSchema:parada_co = {
 
 export const reservaSchema:reserva_co = {
   name: 'reserva',
+  dependants: [],
   fields: {
     id: null,
     id_viagem: null,
@@ -66,6 +70,7 @@ export const reservaSchema:reserva_co = {
 
 export const usuarioSchema:usuario_co = {
   name: 'usuario',
+  dependants: ['reserva'],
   fields: {
     id: null,
     nome_usuario: '',
@@ -82,6 +87,7 @@ export const usuarioSchema:usuario_co = {
 
 export const viagemSchema:viagem_co = {
   name: 'viagem',
+  dependants: ['reserva'],
   fields: {
     id: null,
     id_linha: null,

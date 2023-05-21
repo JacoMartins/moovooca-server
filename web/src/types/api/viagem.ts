@@ -30,5 +30,6 @@ export interface paginated_viagens {
 
 export interface viagem_co {
   name: string,
+  dependants: string[],
   fields: viagem
 }

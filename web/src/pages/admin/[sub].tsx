@@ -12,18 +12,17 @@ import Forbidden from "../forbidden";
 
 import { Info, LineSegments, ListBullets, Path, Users } from "phosphor-react"
 import AdminLinhas from "./sub/linhas"
+import AdminSentidos from "./sub/sentidos"
 import AdminParadas from "./sub/paradas"
 import AdminReservas from "./sub/reservas"
 import AdminUsuarios from "./sub/usuarios"
 import AdminViagens from "./sub/viagens"
-import AdminDashboard from "./sub/dashboard"
-import AdminSentidos from "./sub/sentidos";
 import ProfileButton from "../../components/ProfileButton";
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { logout, reload } from "../../contexts/AuthContext";
 
-export default function Admin({ me, item_id }) {
+export default function Admin({ me, item_id, id_linha, id_sentido, id_usuario, id_viagem }) {
   const router = useRouter()
   const { sub } = router.query
   const [SPAPage, setSPAPage] = useState<string>(sub as string)
@@ -60,13 +59,6 @@ export default function Admin({ me, item_id }) {
   }
 
   const pages = [
-    {
-      name: 'dashboard',
-      title: 'Dashboard',
-      icon: <Info size={20} weight={SPAPage === 'dashboard' ? 'fill' : 'regular'} color="#2f855a" />,
-      Content: AdminDashboard
-    },
-
     {
       name: 'linhas',
       title: 'Linhas',
@@ -186,7 +178,7 @@ export default function Admin({ me, item_id }) {
           </Sidebar>
 
           <div className="content">
-            {pages.map(page => (SPAPage === page.name && <page.Content key={page.name + "_content"} item_id={item_id} handleSub={handleSub} handleOpenSidebar={handleOpenSidebar} handleCloseSidebar={handleCloseSidebar} />))}
+            {pages.map(page => (SPAPage === page.name && <page.Content key={page.name + "_content"} item_id={item_id} handleSub={handleSub} handleOpenSidebar={handleOpenSidebar} handleCloseSidebar={handleCloseSidebar} id_linha={id_linha} id_sentido={id_sentido} id_viagem={id_viagem} id_usuario={id_usuario} />))}
           </div>
         </BodyContainer>
       </Main>
@@ -196,7 +188,7 @@ export default function Admin({ me, item_id }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const cookies = parseServerSideCookies(context.req.headers.cookie) as { __session: string, __session_refresh: string }
-  const { id } = context.query
+  const { id, id_linha, id_sentido, id_viagem, id_usuario } = context.query
 
   const config = {
     headers: {
@@ -211,6 +203,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       me,
       item_id: id ? id : null,
+      id_linha: id_linha ? id_linha : null,
+      id_sentido: id_sentido ? id_sentido : null,
+      id_viagem: id_viagem ? id_viagem : null,
+      id_usuario: id_usuario ? id_usuario : null
     }
   }
 }

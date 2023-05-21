@@ -23,5 +23,6 @@ export interface paginated_paradas {
 
 export interface parada_co {
   name: string,
+  dependants: string[],
   fields: parada
 }

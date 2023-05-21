@@ -58,7 +58,7 @@ export default function Home({ linhas }) {
 
           <section>
             <h3>Sobre o projeto</h3>
-            <p>O projeto &quot;moovooca&quot; é uma iniciativa criada pelos estudantes do curso Pet Computação da Universidade Federal do Ceará (UFC), Pedro Yuri e Cauan Victor, com o objetivo de fornecer informações gerais sobre os ônibus que param na UFC e, assim, auxiliar os estudantes no seu deslocamento pela cidade.</p>
+            <p>O projeto &quot;moovooca&quot; é uma iniciativa criada pelos dois estudantes do curso Pet Computação da Universidade Federal do Ceará (UFC), Pedro Yuri e Cauan Victor e conta com a contribuição de Jacó Martins, visando fornecer informações gerais sobre os ônibus que param na UFC e, assim, auxiliar os estudantes no seu deslocamento pela cidade.</p>
 
             <br />
 
@@ -67,7 +67,7 @@ export default function Home({ linhas }) {
 
               O projeto &quot;moovooca&quot; já está em funcionamento e tem sido muito bem recebido pela comunidade estudantil da UFC. Com sua interface intuitiva e informações precisas, o sistema tem ajudado muitos estudantes a planejar melhor suas rotas de transporte, evitando atrasos e transtornos no seu dia a dia.
 
-              Em resumo, o &quot;moovooca&quot; é um projeto que exemplifica a importância da tecnologia na solução de problemas cotidianos. A iniciativa dos estudantes da UFC Pedro Yuri e Cauan Victor tem o potencial de melhorar a vida dos estudantes que precisam se deslocar diariamente pela cidade e é uma inspiração para outros jovens que buscam fazer a diferença em sua comunidade através da tecnologia.</p>
+              Em resumo, o &quot;moovooca&quot; é um projeto que exemplifica a importância da tecnologia na solução de problemas cotidianos. A iniciativa de Pedro Yuri, Cauan Victor e Jacó Martins tem o potencial de melhorar a vida dos estudantes que precisam se deslocar diariamente pela cidade e é uma inspiração para outros jovens que buscam fazer a diferença em sua comunidade através da tecnologia.</p>
           </section>
         </BodyContainer>
       </GlobalMain>

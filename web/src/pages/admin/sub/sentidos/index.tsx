@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import { CircleNotch, List, MagnifyingGlass, Plus, X } from "phosphor-react"
+import { CircleNotch, Export, Funnel, List, MagnifyingGlass, Plus, X } from "phosphor-react"
 import { useEffect, useState } from "react"
 import Table from "../../../../components/Table"
 import { api } from "../../../../services/api"
@@ -12,14 +12,12 @@ import AdminModal from "../../../../components/AdminModal"
 import { sentido, paginated_sentidos } from "../../../../types/api/sentido"
 import { AdminSubProps } from "../../../../types/pages/AdminSub"
 
-export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar }:AdminSubProps) {
+export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, handleCloseSidebar , id_linha}: AdminSubProps) {
   const router = useRouter()
 
   const [sentidos, setSentidos] = useState<paginated_sentidos>()
   const [dataBusy, setDataBusy] = useState<boolean>(false)
   const [update, setUpdate] = useState<boolean>(false)
-  const [busy, setBusy] = useState<boolean>(false)
-  const [searchInput, setSearchInput] = useState<string>('')
 
   const [modal, setModal] = useState<boolean>(false)
   const [modalItem, setModalItem] = useState<number>()
@@ -30,6 +28,7 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
   const [itemDataRequest, setItemDataRequest] = useState<sentido>()
 
   const [page, setPage] = useState<number>(1)
+  const showFilter = Object.keys(sentidoSchema.fields).find(item => item.startsWith('id_'))
 
   function goTo(route: string) {
     event.preventDefault()
@@ -41,6 +40,11 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
     setModalItem(id)
 
     setModalType(3)
+  }
+
+  function handleOpenExportModal() {
+    setModal(true)
+    setModalType(5)
   }
 
   function handleOpenAddModal() {
@@ -68,14 +72,16 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
     setModalType(2)
   }
 
-  function handleCloseModal() {
-    setModal(false)
+  function handleOpenFilterModal() {
+    setModal(true)
+    setModalItem(null)
+    setItemData(null)
+    setItemDataRequest(null)
+    setModalType(4)
   }
 
-  function handleSearch() {
-    event.preventDefault()
-    goTo(`/search?query=${searchInput}`)
-    setBusy(true)
+  function handleCloseModal() {
+    setModal(false)
   }
 
   async function handleAddItem(data: sentido) {
@@ -106,21 +112,29 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
     const fetch = async () => {
       setDataBusy(true)
 
+      let api_link = `/sentidos?page=${page}&limit=15`
+
       if (item_id) {
         await api.get(`/sentido?id=${item_id}`).then(res => setSentidos({
           items: [res.data],
           pages: '1',
           page: '1'
         })).catch(() => handleOpenErrorModal())
-      } else {
-        await api.get(`/sentidos?page=${page}&limit=15`).then(res => setSentidos(res.data))
+        setDataBusy(false)
+
+        return
+      }
+      
+      if (id_linha) {
+        api_link += `${api_link.includes('=') ? '&' : ''}linha=${id_linha}`
       }
 
+      await api.get(api_link).then(res => setSentidos(res.data))
       setDataBusy(false)
     }
 
     fetch()
-  }, [update, item_id, page])
+  }, [update, item_id, id_linha, page])
 
   return (
     <AdminSubMain>
@@ -137,6 +151,7 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
         itemDataRequest={itemDataRequest}
         setItemDataRequest={setItemDataRequest}
         buttonBusy={buttonBusy}
+        setButtonBusy={setButtonBusy}
         handleSub={handleSub}
         setUpdate={setUpdate}
         update={update}
@@ -151,17 +166,22 @@ export default function AdminSentidos({ item_id, handleSub, handleOpenSidebar, h
         </div>
 
         <h3 className='lead'>Selecione, adicione, altere ou remova sentidos.</h3>
-        <form onSubmit={handleSearch} className='searchContainer'>
-          <input type="text" placeholder="Pesquisar" onChange={event => setSearchInput(event.target.value)} />
-          <button type='submit'>
-            {
-              busy ?
-                <CircleNotch className="load" size={18} weight='regular' color="#2f855a" />
-                :
-                <MagnifyingGlass size={18} weight="bold" color="#2f855a" />
-            }
-          </button>
-        </form>
+        <div className="actionsContainer">
+          {sentidos &&
+            <button onClick={handleOpenExportModal}>
+              <Export size={18} weight='regular' color='#276749' />
+              Exportar para CSV
+            </button>
+          }
+
+          {
+            showFilter &&
+            <button onClick={handleOpenFilterModal}>
+              <Funnel size={18} weight='regular' color='#276749' />
+              Filtrar
+            </button>
+          }
+        </div>
       </section>
 
       <button className="addButton" onClick={() => handleOpenAddModal()}><Plus size={24} weight='regular' color='white' /></button>

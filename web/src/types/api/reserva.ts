@@ -22,5 +22,6 @@ export interface paginated_reservas {
 
 export interface reserva_co {
   name: string,
+  dependants: string[],
   fields: reserva
 }

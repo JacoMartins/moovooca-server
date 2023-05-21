@@ -116,6 +116,11 @@ export const ModalContainer = styled('div', {
   },
 
   '.redirectButton': {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'left',
+    alignItems: 'center',
+    gap: '0.5rem',
     width: 'auto',
     height: 'auto',
     padding: '0.25rem',

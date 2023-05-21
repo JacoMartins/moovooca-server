@@ -15,13 +15,16 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
   const [limit, setLimit] = useState<number>()
   const [exportPage, setExportPage] = useState<number>(1)
   const [exportData, setExportData] = useState<paginated_linhas>()
+  const [exportTimeout, setExportTimeout] = useState<any>()
+  const [filterTimeout, setFilterTimeout] = useState<any>()
+  const [filterViewData, setFilterViewData] = useState<object>({})
 
   async function handleBringExportData(limit: number | null, page: number) {
     setButtonBusy(true)
 
-    await api.get(`/${schema.name + 's'}?page=${page}${limit && '&limit=' + limit}`).then(res => setExportData({
+    await api.get(`/${schema.name === 'viagem' ? `${schema.name.slice(0, -1)}ns` : schema.name + 's'}?page=${page}${limit && '&limit=' + limit}`).then(res => setExportData({
       items: res.data.items.map(item => {
-        const { sentidos, ...rest } = Object.assign({ ...schema.fields }, item)
+        const { sentidos, paradas, viagem, linha, sentido, reserva, viagens, ...rest } = Object.assign({ ...schema.fields }, item)
         return rest
       }),
       pages: res.data.pages,
@@ -29,6 +32,29 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
     }));
 
     setButtonBusy(false)
+  }
+
+  async function handleBringFilterData(key: string, value: string | number) {
+    const route = key.replace('id_', '')
+    setButtonBusy(true)
+
+    await api.get(`/${route}?id=${value}`).then(res => setFilterViewData({ ...filterViewData, [key]: res.data })).catch(
+      () => setFilterViewData({ ...filterViewData, [key]: null })
+    )
+    console.log(filterViewData)
+    console.log(filterViewData)
+
+    setButtonBusy(false)
+  }
+
+  function handleChangeFilterInput(key: string, value: any) {
+    clearTimeout(filterTimeout)
+
+    const timeout = setTimeout(() => {
+      handleBringFilterData(key, value)
+    }, 1000)
+
+    setFilterTimeout(timeout)
   }
 
   function handleToggleLimit() {
@@ -41,6 +67,17 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
     } else {
       setLimitBool(true)
     }
+  }
+
+  function handleChangeLimitInput(value: number) {
+    clearTimeout(exportTimeout)
+
+    const timeout = setTimeout(() => {
+      setLimit(value)
+      handleBringExportData(value, 1)
+    }, 1000)
+
+    setExportTimeout(timeout)
   }
 
   !exportData && handleBringExportData(null, 1)
@@ -68,6 +105,18 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
     })
 
     console.log(itemDataRequest)
+  }
+
+  function handleFilterItems() {
+    const currentRoute = schema.name === 'viagem' ? schema.name.slice(0, -1) + 'ns' : schema.name + 's'
+    let link = `${currentRoute}?`
+
+    Object.entries(filterViewData).map(([key, value]) => link += `${key}=${value.id}&`)
+
+    handleSub(link.slice(0, -1))
+    setFilterObj({})
+    setFilterViewData({})
+    onRequestClose()
   }
 
   function setInputType(key: string, value: any): HTMLInputTypeAttribute {
@@ -154,6 +203,13 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
               })
             }
 
+            {modalType === 0 && schema.dependants.map(item => (
+              <button className="redirectButton" key={item + Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000} onClick={() => handleSub(`${item === 'viagem' ? 'viagens' : item + 's'}?id_${schema.name}=${modalItem}`)}>
+                <ArrowSquareOut size={16} weight='regular' color='#2f855a' />
+                Ver itens relacionados em {item === 'viagem' ? 'viagens' : item + 's'}
+              </button>
+            ))}
+
             {
               modalType === 0 && <button className="sendButton" onClick={() => handleEditItem(itemData.id, itemDataRequest)} disabled={buttonBusy}>
                 {buttonBusy ?
@@ -202,18 +258,20 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
                     {Object.entries(clean_object({ ...schema.fields })).map(([key, value]) => {
                       const key_id = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
-                      return (
-                        <div key={key_id} className="checkboxContainer">
-                          <input
-                            type='checkbox'
-                            id={key + key_id}
-                            name={key + key_id}
-                            onChange={() => handleToggleField(key)}
-                            checked={Object.keys(filterObj).find(item => item === key) && true}
-                          />
-                          <label htmlFor={key + key_id}>{key}</label>
-                        </div>
-                      )
+                      if (key.startsWith('id_')) {
+                        return (
+                          <div key={key + value + key_id} className="checkboxContainer">
+                            <input
+                              type='checkbox'
+                              id={key + key_id}
+                              name={key + key_id}
+                              onChange={() => handleToggleField(key)}
+                              checked={Object.keys(filterObj).find(item => item === key) && true}
+                            />
+                            <label htmlFor={key + key_id}>{key}</label>
+                          </div>
+                        )
+                      }
                     })}
                   </div>
                 </>
@@ -223,29 +281,45 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
                 Object.entries(filterObj).map(([key, value]) => {
                   const type = setInputType(key, value)
                   const defaultValue = padronizeValue(key, value)
+                  const item = key.replace('id_', '') === 'parada' ? 'parada' : key.replace('id_', '') === 'sentido' ? 'sentido' : 'nome'
 
                   return (
-                    <div key={key} className="filterFieldContainer">
-                      <div className="field">
-                        {key}
+                    <>
+                      <div key={key} className="filterFieldContainer">
+                        <div className="field">
+                          {key}
+                        </div>
+                        =
+                        <input
+                          className="editInput"
+                          type={type}
+                          defaultValue={defaultValue}
+                          onChange={event => handleChangeFilterInput(key, event.target.valueAsNumber)}
+                        />
                       </div>
-                      <select className="operator">
-                        <option>=</option>
-                        <option>{'<'}</option>
-                        <option>{'>'}</option>
-                        <option>NOT</option>
-                      </select>
-                      <input
-                        className="editInput"
-                        type={type}
-                        defaultValue={defaultValue}
-                        onChange={event => handleChangeInput(key, value, event)}
-                      />
-                    </div>
+
+                      <span style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        gap: '0.25rem'
+                      }}>
+                        {buttonBusy && <CircleNotch className="load" size={20} weight='regular' color="rgba(0, 0, 0, 0.5)" />}
+                        {(key !== 'id_viagem' && filterViewData[key]) && item[0].toUpperCase() + item.slice(1) + ': ' + filterViewData[key][item]}
+                        {(key === 'id_viagem' && filterViewData[key]) && 'Linha: ' + filterViewData[key]['linha']['nome']}
+                      </span>
+                    </>
                   )
                 })
               }
             </div>
+
+            {
+              modalType === 4 &&
+              <button className="sendButton" onClick={handleFilterItems} disabled={buttonBusy}>
+                Filtrar
+              </button>
+            }
 
             {
               modalType === 5 &&
@@ -260,20 +334,20 @@ export default function AdminModal({ isOpen, onRequestClose, modalType, modalIte
                   />
                   <label htmlFor='exportLimitCheckbox'>Usar limite e paginação?</label>
                 </div>
-                {limitBool && <input placeholder="Insira o limite desejado" type="number" onChange={event => { setLimit(event.target.valueAsNumber); handleBringExportData(event.target.valueAsNumber, exportPage) }} />}
+                {limitBool && <input placeholder="Insira o limite desejado" type="number" onChange={event => handleChangeLimitInput(event.target.valueAsNumber)} />}
                 {
                   exportData &&
                   <>
                     <div className="selectPageContainer">
                       <span>Página:</span>
                       <select className="operator" onChange={event => { setExportPage(int(event.target.value)); handleBringExportData(limit, int(event.target.value)) }}>
-                        {[...Array(int(exportData.pages))].map((key, value) => <option>
+                        {[...Array(int(exportData.pages))].map((key, value) => <option key={Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}>
                           {value + 1}
                         </option>)}
                       </select>
                     </div>
                     <span>Total de Páginas: {exportData.pages}</span>
-                    <CSVLink data={exportData.items} filename={`linhas${new Date().toISOString()}.csv`} onClick={onRequestClose}>
+                    <CSVLink data={exportData.items} filename={`${schema.name === 'viagem' ? schema.name.slice(0, -1) + 'n' : schema.name}s${new Date().toISOString()}.csv`} onClick={onRequestClose}>
                       <button className="sendButton" disabled={buttonBusy}>
                         {buttonBusy ?
                           <>

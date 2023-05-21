@@ -24,5 +24,6 @@ export interface paginated_usuarios {
 
 export interface usuario_co {
   name: string,
+  dependants: string[],
   fields: Usuario
 }

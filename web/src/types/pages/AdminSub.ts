@@ -3,4 +3,8 @@ export interface AdminSubProps {
   handleSub: (sub: string) => void;
   handleOpenSidebar: () => void;
   handleCloseSidebar: () => void;
+  id_linha?: string;
+  id_sentido?: string;
+  id_viagem?: string;
+  id_usuario?: string;
 }
